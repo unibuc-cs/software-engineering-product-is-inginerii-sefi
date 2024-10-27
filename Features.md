@@ -5,9 +5,11 @@
 **Descriere**
 
 Autentificarea este folosita pentru identificarea individuala a utilizatorilor si este bazata pe un sistem de nume de utilizator si parola. In pasul de creare a unui cont, exista doua posibilitati: cont de ascultator sau cont de artist.
+
 **Constrangeri**
 
 Numele de utilizator trebuie sa fie valid, sa nu se repete cu al altui utilizator, parola trebuie sa respecte niste standarde minime de securitate (minim 8 caractere, cel putin o litera mare, cel putin o cifra, cel putin un caracter special).
+
 **Comentarii**
 
 Pe viitor, daca aplicatia va creste considerabil, se doreste implementarea unui sistem de multi-factor authentication. Alta imbunatatire ar fi verificarea daca parola este gasita intr-o lista de parole comune.
