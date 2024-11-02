@@ -1,4 +1,5 @@
 ```mermaid
+
 classDiagram
     class User {
         +int UserId
@@ -13,6 +14,7 @@ classDiagram
         +ICollection~Album~ Albums
         +ICollection~Song~ Songs
         +ICollection~Play~ Plays
+        +ICollection~Like~ Likes
     }
 
     class Role {
@@ -27,6 +29,8 @@ classDiagram
         +string Title
         +ICollection~PlaylistSong~ PlaylistSongs
         +ICollection~Play~ Plays
+        +ICollection~Comment~ Comments
+        +ICollection~Like~ Likes
     }
 
     class Album {
@@ -41,7 +45,6 @@ classDiagram
         +string Name
         +string Description
         +ICollection~PlaylistSong~ PlaylistSongs
-       
     }
 
     class Play {
@@ -60,6 +63,8 @@ classDiagram
         +int? ParentCommentId
         +Comment ParentComment
         +ICollection~Comment~ Replies
+        +int SongId
+        +Song Song
     }
 
     class PlaylistSong {
@@ -82,6 +87,14 @@ classDiagram
         +int RoleId
         +User User
         +Role Role
+    }
+
+    class Like {
+        +int UserId
+        +int SongId
+        +DateTime LikeDate
+        +User User
+        +Song Song
     }
 
     %% Controllers
@@ -133,6 +146,12 @@ classDiagram
         +Delete(int id) IActionResult
     }
 
+    class LikeController {
+        +Index() IActionResult
+        +Create(Like like) IActionResult
+        +Delete(int id) IActionResult
+    }
+
     User "1" --> "0..*" UserRole : has
     Role "1" --> "0..*" UserRole : applies_to
     User "1" --> "0..*" Comment : writes
@@ -146,6 +165,8 @@ classDiagram
     User "1" --> "0..*" Song : creates
     User "1" --> "0..*" Play : plays
     Song "1" --> "0..*" Play : is_played_by
+    User "1" --> "0..*" Like : likes
+    Song "1" --> "0..*" Like : is_liked_by
 
     %% Controller relationships
     UserController --> User : manages
@@ -154,4 +175,6 @@ classDiagram
     AlbumController --> Album : manages
     PlaylistController --> Playlist : manages
     CommentController --> Comment : manages
+    LikeController --> Like : manages
+
 ```
