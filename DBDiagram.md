@@ -1,5 +1,6 @@
 ```mermaid
-erDiagram
+
+     erDiagram
     USER {
         int user_id PK
         string email
@@ -32,6 +33,7 @@ erDiagram
     }
 
     PLAY {
+        int play_id PK
         int user_id FK
         int song_id FK
         date play_time
@@ -42,6 +44,13 @@ erDiagram
         string text
         datetime time
         int parent_comment FK
+        int song_id FK
+    }
+
+    LIKE {
+        int user_id FK
+        int song_id FK
+        date like_date
     }
 
     PLAYLIST_SONG {
@@ -73,5 +82,10 @@ erDiagram
     USER ||--o{ SONG : creates
     USER ||--o{ PLAY : plays
     SONG ||--o{ PLAY : is_played_by
+    SONG ||--o{ COMMENT : has_comment
+    USER ||--o{ LIKE : likes
+    SONG ||--o{ LIKE : is_liked_by
+
+
 
 ```
