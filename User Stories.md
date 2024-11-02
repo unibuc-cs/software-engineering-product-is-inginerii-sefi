@@ -4,7 +4,7 @@
 
 2. Ca ascultator, vreau sa pot crea playlist-uri cu muzica preferata descoperita pe FMI, astfel incat sa imi organizez piesele pentru diferite stari si activitati.
 
-3. Ca ascultator, vreau sa pot lasa comentarii la piesele si playlist-urile mele preferate, astfel incat sa imi exprim aprecierea si sa interactionez cu alti fani si cu artistul.
+3. Ca ascultator, vreau sa pot lasa comentarii la piesele mele preferate, astfel incat sa imi exprim aprecierea si sa interactionez cu alti fani si cu artistul.
 
 4. Ca ascultator, vreau sa pot vizualiza playlist-urile publice ale prietenilor mei, astfel incat sa aflu ce muzica asculta si sa descopar piese noi prin preferintele lor.
 
