@@ -1,0 +1,361 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Data\\Migrations\\20241215203451_repairdb2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Data\\Migrations\\20241215203451_repairdb2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{51498B44-66FD-4CD8-8FB9-7517E380B0C9}|FreeMusicInstantly.csproj|d:\\desktop\\daria facutate\\anul 3 sem 1\\is\\freemusicinstantly\\freemusicinstantly\\areas\\identity\\pages\\account\\register.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{51498B44-66FD-4CD8-8FB9-7517E380B0C9}|FreeMusicInstantly.csproj|solutionrelative:areas\\identity\\pages\\account\\register.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{51498B44-66FD-4CD8-8FB9-7517E380B0C9}|FreeMusicInstantly.csproj|d:\\desktop\\daria facutate\\anul 3 sem 1\\is\\freemusicinstantly\\freemusicinstantly\\areas\\identity\\pages\\account\\register.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{51498B44-66FD-4CD8-8FB9-7517E380B0C9}|FreeMusicInstantly.csproj|solutionrelative:areas\\identity\\pages\\account\\register.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/Spotify/True/SqlTable/dbo.AspNetUserTokens.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/Spotify/True/SqlTable/dbo.__EFMigrationsHistory.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/Spotify/True/SqlTable/dbo.AspNetRoleClaims.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/Spotify/True/SqlTable/dbo.AspNetRoles.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/Spotify/True/SqlTable/dbo.AspNetUsers.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/Spotify/True/SqlTable/dbo.AspNetUserRoles.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{51498B44-66FD-4CD8-8FB9-7517E380B0C9}|FreeMusicInstantly.csproj|d:\\desktop\\daria facutate\\anul 3 sem 1\\is\\freemusicinstantly\\freemusicinstantly\\models\\applicationuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{51498B44-66FD-4CD8-8FB9-7517E380B0C9}|FreeMusicInstantly.csproj|solutionrelative:models\\applicationuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{51498B44-66FD-4CD8-8FB9-7517E380B0C9}|FreeMusicInstantly.csproj|d:\\desktop\\daria facutate\\anul 3 sem 1\\is\\freemusicinstantly\\freemusicinstantly\\models\\seeddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{51498B44-66FD-4CD8-8FB9-7517E380B0C9}|FreeMusicInstantly.csproj|solutionrelative:models\\seeddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{51498B44-66FD-4CD8-8FB9-7517E380B0C9}|FreeMusicInstantly.csproj|d:\\desktop\\daria facutate\\anul 3 sem 1\\is\\freemusicinstantly\\freemusicinstantly\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{51498B44-66FD-4CD8-8FB9-7517E380B0C9}|FreeMusicInstantly.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Data\\Migrations\\20241215203003_repairdb.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Data\\Migrations\\20241215203003_repairdb.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{51498B44-66FD-4CD8-8FB9-7517E380B0C9}|FreeMusicInstantly.csproj|d:\\desktop\\daria facutate\\anul 3 sem 1\\is\\freemusicinstantly\\freemusicinstantly\\views\\shared\\_loginpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{51498B44-66FD-4CD8-8FB9-7517E380B0C9}|FreeMusicInstantly.csproj|solutionrelative:views\\shared\\_loginpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Data\\Migrations\\20241215202459_add_artist_button.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Data\\Migrations\\20241215202459_add_artist_button.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{51498B44-66FD-4CD8-8FB9-7517E380B0C9}|FreeMusicInstantly.csproj|d:\\desktop\\daria facutate\\anul 3 sem 1\\is\\freemusicinstantly\\freemusicinstantly\\areas\\identity\\pages\\_validationscriptspartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{51498B44-66FD-4CD8-8FB9-7517E380B0C9}|FreeMusicInstantly.csproj|solutionrelative:areas\\identity\\pages\\_validationscriptspartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{51498B44-66FD-4CD8-8FB9-7517E380B0C9}|FreeMusicInstantly.csproj|d:\\desktop\\daria facutate\\anul 3 sem 1\\is\\freemusicinstantly\\freemusicinstantly\\areas\\identity\\pages\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{51498B44-66FD-4CD8-8FB9-7517E380B0C9}|FreeMusicInstantly.csproj|solutionrelative:areas\\identity\\pages\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{51498B44-66FD-4CD8-8FB9-7517E380B0C9}|FreeMusicInstantly.csproj|d:\\desktop\\daria facutate\\anul 3 sem 1\\is\\freemusicinstantly\\freemusicinstantly\\areas\\identity\\pages\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{51498B44-66FD-4CD8-8FB9-7517E380B0C9}|FreeMusicInstantly.csproj|solutionrelative:areas\\identity\\pages\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{51498B44-66FD-4CD8-8FB9-7517E380B0C9}|FreeMusicInstantly.csproj|d:\\desktop\\daria facutate\\anul 3 sem 1\\is\\freemusicinstantly\\freemusicinstantly\\scaffoldingreadme.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{51498B44-66FD-4CD8-8FB9-7517E380B0C9}|FreeMusicInstantly.csproj|solutionrelative:scaffoldingreadme.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Data\\Migrations\\20241215200052_add_roles.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Data\\Migrations\\20241215200052_add_roles.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{51498B44-66FD-4CD8-8FB9-7517E380B0C9}|FreeMusicInstantly.csproj|d:\\desktop\\daria facutate\\anul 3 sem 1\\is\\freemusicinstantly\\freemusicinstantly\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{51498B44-66FD-4CD8-8FB9-7517E380B0C9}|FreeMusicInstantly.csproj|solutionrelative:data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "20241215203451_repairdb2.cs",
+              "DocumentMoniker": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Data\\Migrations\\20241215203451_repairdb2.cs",
+              "RelativeDocumentMoniker": "Data\\Migrations\\20241215203451_repairdb2.cs",
+              "ToolTip": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Data\\Migrations\\20241215203451_repairdb2.cs",
+              "RelativeToolTip": "Data\\Migrations\\20241215203451_repairdb2.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-15T20:34:51.144Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "dbo.AspNetUserTokens [Data]",
+              "DocumentMoniker": "ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/Spotify/True/SqlTable/dbo.AspNetUserTokens.sql",
+              "ToolTip": "dbo.AspNetUserTokens [Data]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2024-12-15T20:33:15.103Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Register.cshtml",
+              "DocumentMoniker": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Areas\\Identity\\Pages\\Account\\Register.cshtml",
+              "RelativeDocumentMoniker": "Areas\\Identity\\Pages\\Account\\Register.cshtml",
+              "ToolTip": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Areas\\Identity\\Pages\\Account\\Register.cshtml",
+              "RelativeToolTip": "Areas\\Identity\\Pages\\Account\\Register.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-12-15T20:20:45.583Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Register.cshtml.cs",
+              "DocumentMoniker": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Areas\\Identity\\Pages\\Account\\Register.cshtml.cs",
+              "RelativeDocumentMoniker": "Areas\\Identity\\Pages\\Account\\Register.cshtml.cs",
+              "ToolTip": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Areas\\Identity\\Pages\\Account\\Register.cshtml.cs",
+              "RelativeToolTip": "Areas\\Identity\\Pages\\Account\\Register.cshtml.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAABQAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-15T20:03:55.608Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "dbo.__EFMigrationsHistory [Data]",
+              "DocumentMoniker": "ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/Spotify/True/SqlTable/dbo.__EFMigrationsHistory.sql",
+              "ToolTip": "dbo.__EFMigrationsHistory [Data]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2024-12-15T20:33:04.169Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "dbo.AspNetRoleClaims [Data]",
+              "DocumentMoniker": "ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/Spotify/True/SqlTable/dbo.AspNetRoleClaims.sql",
+              "ToolTip": "dbo.AspNetRoleClaims [Data]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2024-12-15T20:32:59.451Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "dbo.AspNetRoles [Data]",
+              "DocumentMoniker": "ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/Spotify/True/SqlTable/dbo.AspNetRoles.sql",
+              "ToolTip": "dbo.AspNetRoles [Data]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2024-12-15T20:32:52.947Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "dbo.AspNetUsers [Data]",
+              "DocumentMoniker": "ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/Spotify/True/SqlTable/dbo.AspNetUsers.sql",
+              "ToolTip": "dbo.AspNetUsers [Data]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2024-12-15T20:32:24.409Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "dbo.AspNetUserRoles [Data]",
+              "DocumentMoniker": "ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/Spotify/True/SqlTable/dbo.AspNetUserRoles.sql",
+              "ToolTip": "dbo.AspNetUserRoles [Data]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2024-12-15T20:32:16.665Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "20241215203003_repairdb.cs",
+              "DocumentMoniker": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Data\\Migrations\\20241215203003_repairdb.cs",
+              "RelativeDocumentMoniker": "Data\\Migrations\\20241215203003_repairdb.cs",
+              "ToolTip": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Data\\Migrations\\20241215203003_repairdb.cs",
+              "RelativeToolTip": "Data\\Migrations\\20241215203003_repairdb.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-15T20:30:03.92Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAmwB0AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-15T19:55:40.065Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "SeedData.cs",
+              "DocumentMoniker": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Models\\SeedData.cs",
+              "RelativeDocumentMoniker": "Models\\SeedData.cs",
+              "ToolTip": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Models\\SeedData.cs",
+              "RelativeToolTip": "Models\\SeedData.cs",
+              "ViewState": "AgIAAEEAAAAAAAAAAAAmwF0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-15T19:57:25.528Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ApplicationUser.cs",
+              "DocumentMoniker": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Models\\ApplicationUser.cs",
+              "RelativeDocumentMoniker": "Models\\ApplicationUser.cs",
+              "ToolTip": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Models\\ApplicationUser.cs",
+              "RelativeToolTip": "Models\\ApplicationUser.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-15T19:53:59.088Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "_LoginPartial.cshtml",
+              "DocumentMoniker": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Views\\Shared\\_LoginPartial.cshtml",
+              "RelativeDocumentMoniker": "Views\\Shared\\_LoginPartial.cshtml",
+              "ToolTip": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Views\\Shared\\_LoginPartial.cshtml",
+              "RelativeToolTip": "Views\\Shared\\_LoginPartial.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-12-15T20:00:04.985Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "_ViewStart.cshtml",
+              "DocumentMoniker": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Areas\\Identity\\Pages\\_ViewStart.cshtml",
+              "RelativeDocumentMoniker": "Areas\\Identity\\Pages\\_ViewStart.cshtml",
+              "ToolTip": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Areas\\Identity\\Pages\\_ViewStart.cshtml",
+              "RelativeToolTip": "Areas\\Identity\\Pages\\_ViewStart.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-12-15T20:12:30.799Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "20241215202459_add_artist_button.cs",
+              "DocumentMoniker": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Data\\Migrations\\20241215202459_add_artist_button.cs",
+              "RelativeDocumentMoniker": "Data\\Migrations\\20241215202459_add_artist_button.cs",
+              "ToolTip": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Data\\Migrations\\20241215202459_add_artist_button.cs",
+              "RelativeToolTip": "Data\\Migrations\\20241215202459_add_artist_button.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-15T20:25:00.081Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "_ValidationScriptsPartial.cshtml",
+              "DocumentMoniker": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Areas\\Identity\\Pages\\_ValidationScriptsPartial.cshtml",
+              "RelativeDocumentMoniker": "Areas\\Identity\\Pages\\_ValidationScriptsPartial.cshtml",
+              "ToolTip": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Areas\\Identity\\Pages\\_ValidationScriptsPartial.cshtml",
+              "RelativeToolTip": "Areas\\Identity\\Pages\\_ValidationScriptsPartial.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-12-15T20:12:32.422Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "_ViewImports.cshtml",
+              "DocumentMoniker": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Areas\\Identity\\Pages\\_ViewImports.cshtml",
+              "RelativeDocumentMoniker": "Areas\\Identity\\Pages\\_ViewImports.cshtml",
+              "ToolTip": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Areas\\Identity\\Pages\\_ViewImports.cshtml",
+              "RelativeToolTip": "Areas\\Identity\\Pages\\_ViewImports.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-12-15T20:12:29.576Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "20241215200052_add_roles.cs",
+              "DocumentMoniker": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Data\\Migrations\\20241215200052_add_roles.cs",
+              "RelativeDocumentMoniker": "Data\\Migrations\\20241215200052_add_roles.cs",
+              "ToolTip": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Data\\Migrations\\20241215200052_add_roles.cs",
+              "RelativeToolTip": "Data\\Migrations\\20241215200052_add_roles.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-15T20:00:52.414Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "ScaffoldingReadMe.txt",
+              "DocumentMoniker": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\ScaffoldingReadMe.txt",
+              "RelativeDocumentMoniker": "ScaffoldingReadMe.txt",
+              "ToolTip": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\ScaffoldingReadMe.txt",
+              "RelativeToolTip": "ScaffoldingReadMe.txt",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2024-12-15T20:02:13.843Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Data\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "Data\\ApplicationDbContext.cs",
+              "ToolTip": "D:\\Desktop\\daria facutate\\anul 3 sem 1\\IS\\FreeMusicInstantly\\FreeMusicInstantly\\Data\\ApplicationDbContext.cs",
+              "RelativeToolTip": "Data\\ApplicationDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAABEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-15T19:56:17.255Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
