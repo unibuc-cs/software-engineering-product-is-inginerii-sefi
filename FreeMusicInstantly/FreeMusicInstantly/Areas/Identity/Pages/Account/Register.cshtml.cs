@@ -99,6 +99,10 @@ namespace FreeMusicInstantly.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [Required]
+            [Display(Name = "Register as Artist")]
+            public bool IsArtist { get; set; }
         }
 
 
@@ -125,8 +129,14 @@ namespace FreeMusicInstantly.Areas.Identity.Pages.Account
                     _logger.LogInformation("User created a new account with password.");
 
 
-                    // PASUL 9 - useri si roluri (adaugarea rolului la inregistrare)
-                    await _userManager.AddToRoleAsync(user, "User");
+                    if (Input.IsArtist)
+                    {
+                        await _userManager.AddToRoleAsync(user, "Artist");
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, "User");
+                    }
 
 
                     var userId = await _userManager.GetUserIdAsync(user);
