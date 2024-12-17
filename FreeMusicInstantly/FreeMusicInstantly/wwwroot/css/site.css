@@ -81,3 +81,24 @@ body {
     background-color: #c73a3a;
     color: white;
 }
+
+nav a {
+    color: #07b58c;
+    text-decoration: none;
+    box-shadow: 0 5px 7px rgba(0, 0, 0, 0.1) !important;
+    padding: 0px 0px;
+    margin: 0 8px;
+    border-radius: 4px;
+    transition: color 0.3s ease;
+    font-size: 18px;
+}
+
+nav a:hover {
+    color: #07b58c !important;
+}
+
+.navbar-toggleable-sm {
+    box-shadow: 0 5px 7px rgba(0, 0, 0, 0.1) !important;
+}
+
+
