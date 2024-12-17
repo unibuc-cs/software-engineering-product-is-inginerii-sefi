@@ -20,3 +20,64 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+
+.buton_universal {
+    background-color: white;
+    color: #33b249;
+    border: 2px solid #33b249;
+    box-shadow: 0 11px 15px rgba(0, 0, 0, 0.1) !important;
+    padding: 7px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 3px 1px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+.buton_universal:hover {
+    background-color: #33b249;
+    color: white;
+}
+
+.buton_editare {
+    background-color: white;
+    color: #559cda;
+    border: 2px solid #559cda;
+    box-shadow: 0 11px 15px rgba(0, 0, 0, 0.1) !important;
+    padding: 7px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 3px 1px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+.buton_editare:hover {
+    background-color: #559cda;
+    color: white;
+}
+
+.buton_stergere {
+    background-color: white;
+    color: #c73a3a;
+    border: 2px solid #c73a3a;
+    box-shadow: 0 11px 15px rgba(0, 0, 0, 0.1) !important;
+    padding: 7px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 3px 1px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+.buton_stergere:hover {
+    background-color: #c73a3a;
+    color: white;
+}
