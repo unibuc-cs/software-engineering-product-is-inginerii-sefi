@@ -15,6 +15,9 @@ namespace FreeMusicInstantly.Models
 
         public string? LastName { get; set; }
 
+        public string? MyMusicDescription { get; set; }
+        public string? Biography { get; set; }
+
         [NotMapped]
         public IEnumerable<SelectListItem>? AllRoles { get; set; }
 
