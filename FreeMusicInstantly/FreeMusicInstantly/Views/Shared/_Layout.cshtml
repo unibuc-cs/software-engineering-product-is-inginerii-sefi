@@ -29,6 +29,23 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                Explore
+                            </a>
+                            <ul class="dropdown-menu ">
+                                <li>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="ApplicationUsers" asp-action="Index">Find friends</a>
+                                </li>
+                                <li>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="ApplicationUsers" asp-action="Index">Find artists</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="ApplicationUsers" asp-action="MyProfile">My profile</a>
+                        </li>
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
