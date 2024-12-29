@@ -111,30 +111,52 @@ nav a:hover {
 .card {
     margin: auto;
     background-color: #e8f5e9;
-    border: 1px solid #a5d6a7;
+    border: 1px solid #33b249;
     border-radius: 10px;
     max-width: 500px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .card-body {
-    color: #388e3c;
+    color: #33b249;
     display: flex;
-    flex-direction: column; 
-    justify-content: center; 
-    align-items: center; 
-    height: 1%; 
-
-
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 1%;
 }
 
 
 h1 {
-    color: #2e7d32;
+    color: #33b249;
+}
+h2 {
+    color: #33b249;
 }
 
 .text-center {
     text-align: center;
 }
 
+.form-control {
+    border-color: #33b249;
+}
+
+    .form-control:focus {
+        border-color: #33b249;
+        box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+    }
+
+.form-floating label {
+    color: #33b249;
+}
+
+.form-check-input:checked {
+    background-color: #33b249;
+    border-color: #33b249;
+}
+
+.form-check-label {
+    color: #33b249;
+}
 
