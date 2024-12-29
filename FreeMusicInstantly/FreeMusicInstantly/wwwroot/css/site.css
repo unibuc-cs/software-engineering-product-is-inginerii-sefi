@@ -119,6 +119,13 @@ nav a:hover {
 
 .card-body {
     color: #388e3c;
+    display: flex;
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    height: 1%; 
+
+
 }
 
 
