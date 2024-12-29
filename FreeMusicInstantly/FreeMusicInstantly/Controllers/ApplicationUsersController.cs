@@ -178,6 +178,23 @@ namespace proiectDAW.Controllers
             return RedirectToAction("MyProfile");
         }
 
+        [HttpPost]
+        public IActionResult Delete(string id)
+        {
+            var user = db.Users
+                         .Where(u => u.Id == id)
+                         .First();
+
+           
+
+            db.ApplicationUsers.Remove((ApplicationUser)user);
+
+            db.SaveChanges();
+
+            return RedirectToAction("MyProfile");
+        }
+
+
         [NonAction]
         public IEnumerable<SelectListItem> GetAllRoles()
         {
