@@ -56,25 +56,47 @@ namespace proiectDAW.Controllers
         }
 
    
-        [Authorize(Roles = "Admin,User")]
+        [Authorize(Roles = "Admin,User,Artist")]
         public IActionResult ViewUsers()
         {
-            var users = db.Users
-                          .Where(u => _userManager.IsInRoleAsync((ApplicationUser)u, "User").Result) // Filter by "User" role
-                          .OrderBy(u => u.UserName)
-                          .ToList();
+            var artistRoleName = "User";
+            var users = from user in db.Users
+                          join userRole in db.UserRoles on user.Id equals userRole.UserId
+                          join role in db.Roles on userRole.RoleId equals role.Id
+                          where role.Name == artistRoleName
+                          orderby user.UserName
+                          select user;
 
+            ViewBag.UsersList = users;
+            ViewBag.EsteAdmin = User.IsInRole("Admin");
+            if (TempData.ContainsKey("message"))
+            {
+                ViewBag.Msg = TempData["message"];
+                ViewBag.MsgType = TempData["messageType"];
+            }
             return View(users); 
         }
 
        
-        [Authorize(Roles = "Admin,Artist")]
+        [Authorize(Roles = "Admin,Artist,Artist")]
         public IActionResult ViewArtists()
         {
-            var artists = db.Users
-                            .Where(u => _userManager.IsInRoleAsync((ApplicationUser)u, "Artist").Result) // Filter by "Artist" role
-                            .OrderBy(u => u.UserName)
-                            .ToList();
+            var artistRoleName = "Artist";  
+            var artists = from user in db.Users
+                                    join userRole in db.UserRoles on user.Id equals userRole.UserId
+                                    join role in db.Roles on userRole.RoleId equals role.Id
+                                    where role.Name == artistRoleName
+                                    orderby user.UserName
+                                    select user;
+
+           
+            ViewBag.UsersList = artists;
+            ViewBag.EsteAdmin = User.IsInRole("Admin");
+            if (TempData.ContainsKey("message"))
+            {
+                ViewBag.Msg = TempData["message"];
+                ViewBag.MsgType = TempData["messageType"];
+            }
 
             return View(artists); 
         }
@@ -214,7 +236,7 @@ namespace proiectDAW.Controllers
             return selectList;
         }
          /* to be implemented
-         -delete method
+         -delete method to be completed
          -show songs and albums for artist
          -show playlists for users
          */
