@@ -35,9 +35,10 @@ namespace proiectDAW.Controllers
         [Authorize(Roles = "User,Admin,Artist")]
         public async Task<IActionResult> MyProfile()
         {
-            var currentUserId = _userManager.GetUserId(User); // Get the current logged-in user's ID
-            var currentUser = await _userManager.FindByIdAsync(currentUserId); // Find user in the database
+            var currentUserId = _userManager.GetUserId(User); 
+            var currentUser = await _userManager.FindByIdAsync(currentUserId);
 
+            ViewBag.CurrentUserId = currentUserId;
             if (currentUser == null)
             {
                 TempData["message"] = "Your profile was not found";
@@ -45,11 +46,16 @@ namespace proiectDAW.Controllers
                 return RedirectToAction("Index");
             }
             ViewBag.EsteArtist = User.IsInRole("Artist");
+            if (TempData.ContainsKey("message"))
+            {
+                ViewBag.Msg = TempData["message"];
+                ViewBag.MsgType = TempData["messageType"];
+            }
 
-            return View(currentUser); // Return the profile view
+            return View(currentUser); 
         }
 
-        // Method to view all users (not artists or admins)
+   
         [Authorize(Roles = "Admin,User")]
         public IActionResult ViewUsers()
         {
@@ -58,10 +64,10 @@ namespace proiectDAW.Controllers
                           .OrderBy(u => u.UserName)
                           .ToList();
 
-            return View(users); // Return the users list view
+            return View(users); 
         }
 
-        // Method to view all artists
+       
         [Authorize(Roles = "Admin,Artist")]
         public IActionResult ViewArtists()
         {
@@ -70,7 +76,7 @@ namespace proiectDAW.Controllers
                             .OrderBy(u => u.UserName)
                             .ToList();
 
-            return View(artists); // Return the artists list view
+            return View(artists); 
         }
 
 
@@ -109,84 +115,68 @@ namespace proiectDAW.Controllers
         }
 
         [Authorize(Roles = "User,Admin,Artist")]
-        public async Task<ActionResult> Edit(string id)
+        public async Task<ActionResult> Edit()
         {
             var currentUserId = _userManager.GetUserId(User);
+            var currentUser = await _userManager.FindByIdAsync(currentUserId);
 
-            var isAdmin = User.IsInRole("Admin");
 
-            if (id != currentUserId && !isAdmin)
-            {
-                TempData["message"] = "You do not have permission to edit this profile";
-                TempData["messageType"] = "alert alert-danger";
-                return RedirectToAction("Index");
-            }
-
-            ApplicationUser user = (ApplicationUser)db.Users.Find(id);
-
-         
+            ApplicationUser user = (ApplicationUser)db.Users.Find(currentUserId);
+            ViewBag.CurrentUserId = currentUserId;
 
             user.AllRoles = GetAllRoles();
 
-            var roleNames = await _userManager.GetRolesAsync(user);
+            var roleNames = await _userManager.GetRolesAsync(user); 
+
+           
             var currentUserRole = _roleManager.Roles
                                               .Where(r => roleNames.Contains(r.Name))
                                               .Select(r => r.Id)
-                                              .FirstOrDefault();
+                                              .First(); 
             ViewBag.UserRole = currentUserRole;
 
             return View(user);
         }
+
         [Authorize(Roles = "User,Admin,Artist")]
         [HttpPost]
-        public async Task<ActionResult> Edit(string id, ApplicationUser newData, [FromForm] string newRole)
+        public async Task<ActionResult> Edit( ApplicationUser newData)
         {
             var currentUserId = _userManager.GetUserId(User);
+            var currentUser = await _userManager.FindByIdAsync(currentUserId);
 
-            var isAdmin = User.IsInRole("Admin");
+            ApplicationUser user = (ApplicationUser)db.Users.Find(currentUserId);
 
-            if (id != currentUserId && !isAdmin)
+            ViewBag.CurrentUserId = currentUserId;
+            if (user == null)
             {
-                TempData["message"] = "You do not have permission to edit this profile";
+                TempData["message"] = "User not found.";
                 TempData["messageType"] = "alert alert-danger";
                 return RedirectToAction("Index");
             }
-
-            ApplicationUser user = (ApplicationUser)db.Users.Find(id);
-
-           
-            user.AllRoles = GetAllRoles();
 
             if (ModelState.IsValid)
             {
                 user.UserName = newData.UserName;
                 user.Email = newData.Email;
                 user.PhoneNumber = newData.PhoneNumber;
-                user.Biography = newData.Biography;
                 user.MyMusicDescription = newData.MyMusicDescription;
+                user.Biography = newData.Biography;
 
-                var roles = db.Roles.ToList();
-
-                foreach (var role in roles)
-                {
-                    await _userManager.RemoveFromRoleAsync(user, role.Name);
-                }
-                var roleName = await _roleManager.FindByIdAsync(newRole);
-                await _userManager.AddToRoleAsync(user, roleName.ToString());
-
+              
                 db.SaveChanges();
-                TempData["message"] = "The user profile was updated succesfully";
+
+                TempData["message"] = "The user was edited!";
                 TempData["messageType"] = "alert alert-success";
             }
             else
             {
-                TempData["message"] = "Error while trying to edit this profile";
+                TempData["message"] = "Error when editing the user";
                 TempData["messageType"] = "alert alert-danger";
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("MyProfile");
         }
-
 
         [NonAction]
         public IEnumerable<SelectListItem> GetAllRoles()
