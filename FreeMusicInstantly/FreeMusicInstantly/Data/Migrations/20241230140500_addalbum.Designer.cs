@@ -4,6 +4,7 @@ using FreeMusicInstantly.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FreeMusicInstantly.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241230140500_addalbum")]
+    partial class addalbum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,64 +52,6 @@ namespace FreeMusicInstantly.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Albums");
-                });
-
-            modelBuilder.Entity("FreeMusicInstantly.Models.Song", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Photo_Cover")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Songs");
-                });
-
-            modelBuilder.Entity("FreeMusicInstantly.Models.SongAlbum", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("SongId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AlbumId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id", "SongId", "AlbumId");
-
-                    b.HasIndex("AlbumId");
-
-                    b.HasIndex("SongId");
-
-                    b.ToTable("SongAlbums");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -348,34 +293,6 @@ namespace FreeMusicInstantly.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("FreeMusicInstantly.Models.Song", b =>
-                {
-                    b.HasOne("FreeMusicInstantly.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("FreeMusicInstantly.Models.SongAlbum", b =>
-                {
-                    b.HasOne("FreeMusicInstantly.Models.Album", "Album")
-                        .WithMany("SongAlbums")
-                        .HasForeignKey("AlbumId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FreeMusicInstantly.Models.Song", "Song")
-                        .WithMany("SongAlbums")
-                        .HasForeignKey("SongId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Album");
-
-                    b.Navigation("Song");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -425,16 +342,6 @@ namespace FreeMusicInstantly.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("FreeMusicInstantly.Models.Album", b =>
-                {
-                    b.Navigation("SongAlbums");
-                });
-
-            modelBuilder.Entity("FreeMusicInstantly.Models.Song", b =>
-                {
-                    b.Navigation("SongAlbums");
                 });
 #pragma warning restore 612, 618
         }
