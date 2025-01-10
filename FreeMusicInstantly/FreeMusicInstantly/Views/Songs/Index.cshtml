@@ -1,0 +1,43 @@
+﻿@model IEnumerable<FreeMusicInstantly.Models.Song>
+
+@{
+    ViewData["Title"] = "Songs Index";
+}
+
+<h1>Songs</h1>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Photo Cover</th>
+            <th>Uploaded Date</th>
+            <th>User</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (ViewBag.Songs != null && ((IEnumerable<FreeMusicInstantly.Models.Song>)ViewBag.Songs).Any())
+        {
+            foreach (var song in (IEnumerable<FreeMusicInstantly.Models.Song>)ViewBag.Songs)
+            {
+                <tr>
+                    <td><a href="/Songs/Show/@song.Id">@song.Title</td>
+                    <td>@song.Description</td>
+                    <td>
+                        <img src="~/files/@song.Photo_Cover"></img>
+                    </td>
+                    <td>@song.Date.ToString("yyyy-MM-dd")</td>
+                    <td>@song.User?.UserName</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6" class="text-center">No songs available</td>
+            </tr>
+        }
+    </tbody>
+</table>
