@@ -2,6 +2,7 @@
 using FreeMusicInstantly.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FreeMusicInstantly.Controllers
 {
@@ -20,8 +21,39 @@ namespace FreeMusicInstantly.Controllers
         }
         public IActionResult Index()
         {
-            var songs = db.Songs.ToList();
-            ViewBag.Songs = songs;
+            var songs = db.Songs.Include("User")
+                                .OrderBy(p => p.Title)
+                                .ToList();
+            int perPage = 9;
+            string search = "";
+            if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+            {   search = Convert.ToString(HttpContext.Request.Query["search"]);
+                songs = db.Songs.Include("User")
+                                .Where(p => p.Title.Contains(search))
+                                .OrderBy(p => p.Title)
+                                .ToList();
+            }
+            ViewBag.SearchString = search;
+
+            var totalItems = songs.Count();
+            var page = Convert.ToInt32(HttpContext.Request.Query["page"]);
+            var offset = 0;
+            if(!page.Equals(0))
+            {
+                offset = (page - 1) * perPage;
+            }
+            var paginatedSongs = songs.Skip(offset).Take(perPage).ToList();
+            ViewBag.Songs = paginatedSongs;
+            ViewBag.LastPage = Math.Ceiling((float)totalItems / (float)perPage);
+
+            if (search != "")
+            {
+                ViewBag.PaginationBaseUrl = "/Songs/Index/?search=" + search + "&page";
+            }
+            else
+            {
+                ViewBag.PaginationBaseUrl = "/Songs/Index/?page";
+            }
             return View();
         }
 
