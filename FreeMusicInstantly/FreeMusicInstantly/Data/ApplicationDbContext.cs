@@ -17,6 +17,9 @@ namespace FreeMusicInstantly.Data
         public DbSet<Song> Songs { get; set; }
         public DbSet<SongAlbum> SongAlbums { get; set; }
 
+        public DbSet<Playlist> Playlists { get; set; }
+        public DbSet<SongPlaylist> SongPlaylists { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -39,6 +42,23 @@ namespace FreeMusicInstantly.Data
                 .HasForeignKey(ab => ab.AlbumId);
 
 
+            modelBuilder.Entity<SongPlaylist>()
+                .HasKey(pl => new
+                {
+                    pl.Id,
+                    pl.SongId,
+                    pl.PlaylistId
+                });
+
+            modelBuilder.Entity<SongPlaylist>()
+                .HasOne(pl => pl.Song)
+                .WithMany(pl => pl.SongPlaylists)
+                .HasForeignKey(pl => pl.SongId);
+
+            modelBuilder.Entity<SongPlaylist>()
+                .HasOne(pl => pl.Playlist)
+                .WithMany(pl => pl.SongPlaylists)
+                .HasForeignKey(pl => pl.PlaylistId);
         }
 
     }

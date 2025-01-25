@@ -26,7 +26,7 @@ namespace FreeMusicInstantly.Models
         public virtual ApplicationUser? User { get; set; }
        
         public virtual ICollection<SongAlbum>? SongAlbums { get; set; }
-       
+        public virtual ICollection<SongPlaylist>? SongPlaylists { get; set; }
 
     }
 }
