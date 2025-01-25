@@ -29,10 +29,11 @@
     {
         foreach (var song in (IEnumerable<FreeMusicInstantly.Models.Song>)ViewBag.Songs)
         {
+			var firstAlbum = song.SongAlbums.FirstOrDefault();
             <div class="col-md-4 mb-4">
                 <a href="/Songs/Show/@song.Id" style="text-decoration: none; color: inherit;">
                     <div class="card" style="height: 100%;">
-                        <img src="~/files/@song.Photo_Cover" class="card-img-top" alt="@song.Title" style="max-height: 200px; object-fit: cover;">
+                        <img src="~/files/@firstAlbum.Album.PhotoCover" class="card-img-top" alt="@song.Title" style="max-height: 200px; object-fit: cover;">
                         <div class="card-body text-center">
                             <h5 class="card-title">@song.Title</h5>
                             <p class="card-text">@song.User?.UserName</p>

@@ -18,8 +18,8 @@ namespace FreeMusicInstantly.Models
         [StringLength(100, ErrorMessage = "The description can't have more than 100 characters")]
         public string Description { get; set; }
 
-        [Required(ErrorMessage = "Foto cover is mendatory")]
-        public string Photo_Cover { get; set; }
+        //[Required(ErrorMessage = "Foto cover is mendatory")]
+        //public string Photo_Cover { get; set; }
         public string SongFile { get; set; }
         public DateTime Date { get; set; }
         public string? UserId { get; set; }
