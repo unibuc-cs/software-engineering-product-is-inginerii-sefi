@@ -13,6 +13,8 @@ namespace FreeMusicInstantly.Models
 
         [Required(ErrorMessage = "The description of the album is mendatory")]
         public string Description { get; set; }
+        [Required(ErrorMessage = "Photo cover is mendatory")]
+        public string PhotoCover { get; set; }
         public string? UserId { get; set; }
         public virtual ApplicationUser? User { get; set; }
 

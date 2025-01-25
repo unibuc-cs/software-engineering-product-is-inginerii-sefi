@@ -22,6 +22,8 @@ namespace FreeMusicInstantly.Controllers
         public IActionResult Index()
         {
             var songs = db.Songs.Include("User")
+                                .Include(s => s.SongAlbums)
+                                .ThenInclude(sa => sa.Album)
                                 .OrderBy(p => p.Title)
                                 .ToList();
             int perPage = 9;
@@ -29,6 +31,8 @@ namespace FreeMusicInstantly.Controllers
             if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
             {   search = Convert.ToString(HttpContext.Request.Query["search"]);
                 songs = db.Songs.Include("User")
+                                .Include(s => s.SongAlbums)
+                                .ThenInclude(sa => sa.Album)
                                 .Where(p => p.Title.Contains(search))
                                 .OrderBy(p => p.Title)
                                 .ToList();
@@ -43,6 +47,10 @@ namespace FreeMusicInstantly.Controllers
                 offset = (page - 1) * perPage;
             }
             var paginatedSongs = songs.Skip(offset).Take(perPage).ToList();
+            for (int i = 0; i < paginatedSongs.Count(); i++)
+            {
+                paginatedSongs[i].SongAlbums = paginatedSongs[i].SongAlbums.Take(1).ToList();
+            }
             ViewBag.Songs = paginatedSongs;
             ViewBag.LastPage = Math.Ceiling((float)totalItems / (float)perPage);
 
@@ -59,11 +67,12 @@ namespace FreeMusicInstantly.Controllers
 
         public IActionResult Show(int id)
         {
-            var song = db.Songs.Find(id);
+            var song = db.Songs.Include("SongAlbums.Album").First(p => p.Id == id);
             if (song == null)
             {
                 return NotFound();
             }
+            ViewBag.PhotoCover = song.SongAlbums.First().Album.PhotoCover;
             return View(song);
         }
     }
