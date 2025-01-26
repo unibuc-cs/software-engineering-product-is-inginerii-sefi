@@ -23,7 +23,8 @@ namespace FreeMusicInstantly.Controllers
         public IActionResult Index()
         {
             SetAccessRights();
-            var playlists = db.Playlists.Where(x => x.UserId == _userManager.GetUserId(User)).Include("User");
+            var playlists = db.Playlists.Include("SongPlaylists")
+                                        .Where(x => x.UserId == _userManager.GetUserId(User)).Include("User");
             ViewBag.Playlists = playlists;
             if (TempData.ContainsKey("message"))
             {

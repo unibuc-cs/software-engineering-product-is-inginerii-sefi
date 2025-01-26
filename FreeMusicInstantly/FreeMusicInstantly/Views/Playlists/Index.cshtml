@@ -17,11 +17,16 @@
 <br />
 <br />
 
+@* @if (ViewBag.Playlists != null && ((IEnumerable<FreeMusicInstantly.Models.Playlist>)ViewBag.Playlists).Any()) *@
+@* { *@
+@*     //return; *@
+@* } *@
+
 <div class="row">
     @foreach (var playlist in ViewBag.Playlists)
     {
         <div class="card">
-            <img src="~/files/@playlist.PhotoCover" alt="@Model.Playlist" style="max-width: 300px; height: auto; margin-bottom: 20px;" />
+            <img src="~/files/@playlist.PhotoCover" alt="@playlist.PlaylistName" style="max-width: 300px; height: auto; margin-bottom: 20px;" />
 
             <div class="card-body">
                 <h1>
@@ -56,8 +61,11 @@
                     </svg> Creator of the playlist: @playlist.User.UserName
                 </p>
 
+
+            </div>
+            <div class="d-flex flex-row justify-content-around">
                 <form method="get">
-                    <button type="submit" class="buton_universal" formaction="/ApplicationUsers/Show/@playlist.Id">
+                    <button type="submit" class="buton_universal" formaction="/Playlists/Show/@playlist.Id">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-music" viewBox="0 0 16 16">
                             <path d="M11 6.64a1 1 0 0 0-1.243-.97l-1 .25A1 1 0 0 0 8 6.89v4.306A2.6 2.6 0 0 0 7 11c-.5 0-.974.134-1.338.377-.36.24-.662.628-.662 1.123s.301.883.662 1.123c.364.243.839.377 1.338.377s.974-.134 1.338-.377c.36-.24.662-.628.662-1.123V8.89l2-.5z" />
                             <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z" />
@@ -65,9 +73,6 @@
                         View Songs
                     </button>
                 </form>
-
-            </div>
-            <div class="d-flex flex-row justify-content-around">
                 <form method="get">
                     <button type="submit" class="buton_editare" formaction="/Playlists/Edit/@playlist.Id">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
