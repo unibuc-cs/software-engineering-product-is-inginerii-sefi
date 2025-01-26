@@ -55,6 +55,8 @@ namespace FreeMusicInstantly.Controllers
 
             cat.UserId = _userManager.GetUserId(User);
 
+            cat.Date = DateTime.Now;
+
             if (PhotoCover != null)
             {
                 var fileName = Path.GetFileName(PhotoCover.FileName);
@@ -141,6 +143,7 @@ namespace FreeMusicInstantly.Controllers
                     cat.AlbumName = reqcat.AlbumName;
                     cat.Description = reqcat.Description;
                     cat.NrSongs = db.SongAlbums.Where(a => a.AlbumId == cat.Id).Count();
+                    cat.Date = DateTime.Now; // no need to take it from reqcat
 
                     if (PhotoCover != null)
                     {
