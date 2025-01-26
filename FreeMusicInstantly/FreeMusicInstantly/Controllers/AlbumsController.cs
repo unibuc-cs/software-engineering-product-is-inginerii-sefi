@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace proiectDAW.Controllers
+namespace FreeMusicInstantly.Controllers
 {
 
     public class AlbumsController : Controller
@@ -16,7 +16,7 @@ namespace proiectDAW.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         public AlbumsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            this.db = context;
+            db = context;
             _userManager = userManager;
             _roleManager = roleManager;
         }
@@ -39,7 +39,7 @@ namespace proiectDAW.Controllers
 
             return View();
         }
-        [Authorize(Roles = "User,Admin,Artist")]
+        [Authorize(Roles = "Admin,Artist")]
         public IActionResult New()
         {
             Album cat = new Album();
@@ -180,17 +180,17 @@ namespace proiectDAW.Controllers
 
         [Authorize(Roles = "Admin,Artist")]
         [HttpPost]
-        public IActionResult RemoveSong(int CategoryId, int BookmarkId)
+        public IActionResult RemoveSong(int AlbumId, int SongId)
         {
             Album cat = db.Albums.Include("SongAlbums")
-                                      .Where(a => a.Id == CategoryId).First();
+                                      .Where(a => a.Id == AlbumId).First();
 
             if (_userManager.GetUserId(User) == cat.UserId)
             {
 
                 foreach (var bmkcat in cat.SongAlbums)
                 {
-                    if (bmkcat.SongId == BookmarkId)
+                    if (bmkcat.SongId == SongId)
                     {
                         db.SongAlbums.Remove(bmkcat);
                     }
