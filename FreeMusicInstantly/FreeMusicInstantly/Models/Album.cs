@@ -15,6 +15,7 @@ namespace FreeMusicInstantly.Models
         public string Description { get; set; }
         [Required(ErrorMessage = "Photo cover is mendatory")]
         public string PhotoCover { get; set; }
+        public DateTime Date { get; set; }
         public string? UserId { get; set; }
         public virtual ApplicationUser? User { get; set; }
 
