@@ -167,6 +167,21 @@ namespace FreeMusicInstantly.Controllers
                         }
                     }
 
+                    db.SongAlbums.RemoveRange(db.SongAlbums.Where(a => a.AlbumId == cat.Id));
+                    cat.SongAlbums.Clear();
+                    if (reqcat.SongAlbums != null)
+                    {
+                        foreach (var song in reqcat.SongAlbums)
+                        {
+                            SongAlbum sa = new SongAlbum();
+                            sa.AlbumId = cat.Id;
+                            sa.SongId = song.SongId;
+                            db.SongAlbums.Add(sa);
+                            cat.SongAlbums.Add(sa);
+                        }
+                    }
+                    db.SaveChanges();
+
                     TempData["message"] = "The album was edited successfully";
                     TempData["messageType"] = "alert alert-success";
                     db.SaveChanges();
