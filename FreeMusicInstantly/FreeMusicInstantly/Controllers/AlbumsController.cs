@@ -48,12 +48,27 @@ namespace FreeMusicInstantly.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin,Artist")]
-        public IActionResult New(Album cat)
+        public async Task<IActionResult> New(Album cat, IFormFile? PhotoCover)
         {
 
             cat.NrSongs = 0;
 
             cat.UserId = _userManager.GetUserId(User);
+
+            if (PhotoCover != null)
+            {
+                var fileName = Path.GetFileName(PhotoCover.FileName);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\files", fileName);
+                using (var fileSteam = new FileStream(filePath, FileMode.Create))
+                {
+                    await PhotoCover.CopyToAsync(fileSteam);
+                }
+                cat.PhotoCover = fileName;
+            }
+            else
+            {
+                cat.PhotoCover = "default.jpg"; // default image as a black photo
+            }
 
             if (ModelState.IsValid)
             {
@@ -115,7 +130,7 @@ namespace FreeMusicInstantly.Controllers
 
         [Authorize(Roles = "Admin,Artist")]
         [HttpPost]
-        public IActionResult Edit(int id, Album reqcat)
+        public async Task<IActionResult> Edit(int id, Album reqcat, IFormFile? PhotoCover)
         {
             Album cat = db.Albums.Where(a => a.Id == id).First();
 
@@ -126,6 +141,31 @@ namespace FreeMusicInstantly.Controllers
                     cat.AlbumName = reqcat.AlbumName;
                     cat.Description = reqcat.Description;
                     cat.NrSongs = db.SongAlbums.Where(a => a.AlbumId == cat.Id).Count();
+
+                    if (PhotoCover != null)
+                    {
+                        var fileName = Path.GetFileName(PhotoCover.FileName);
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\files", fileName);
+                        using (var fileSteam = new FileStream(filePath, FileMode.Create))
+                        {
+                            await PhotoCover.CopyToAsync(fileSteam);
+                        }
+                        cat.PhotoCover = fileName;
+                    }
+                    else
+                    {
+                        if (reqcat.PhotoCover != null)
+                        {
+                            cat.PhotoCover = reqcat.PhotoCover;
+                        }
+                        else
+                        {
+                            if (cat.PhotoCover == null)
+                            {
+                                cat.PhotoCover = "default.jpg";
+                            }
+                        }
+                    }
 
                     TempData["message"] = "The album was edited successfully";
                     TempData["messageType"] = "alert alert-success";
