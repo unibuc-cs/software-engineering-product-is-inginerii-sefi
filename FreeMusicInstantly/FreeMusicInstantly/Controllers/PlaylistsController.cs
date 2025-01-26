@@ -1,12 +1,264 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FreeMusicInstantly.Data;
+using FreeMusicInstantly.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FreeMusicInstantly.Controllers
 {
     public class PlaylistsController : Controller
     {
+        private readonly ApplicationDbContext db;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        public PlaylistsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        {
+            db = context;
+            _userManager = userManager;
+            _roleManager = roleManager;
+        }
+
+        [Authorize(Roles = "User,Admin,Artist")]
         public IActionResult Index()
         {
+            SetAccessRights();
+            var playlists = db.Playlists.Where(x => x.UserId == _userManager.GetUserId(User)).Include("User");
+            ViewBag.Playlists = playlists;
+            if (TempData.ContainsKey("message"))
+            {
+                ViewBag.Msg = TempData["message"];
+                ViewBag.MsgType = TempData["messageType"];
+            }
+
+
             return View();
+        }
+
+        [Authorize(Roles = "Admin,Artist,User")]
+        public IActionResult New()
+        {
+            Playlist p = new Playlist();
+            return View(p);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin,Artist,User")]
+        public async Task<IActionResult> New(Playlist p, IFormFile? PhotoCover)
+        {
+            p.UserId = _userManager.GetUserId(User);
+
+            if (PhotoCover != null)
+            {
+                var fileName = Path.GetFileName(PhotoCover.FileName);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\files", fileName);
+                using (var fileSteam = new FileStream(filePath, FileMode.Create))
+                {
+                    await PhotoCover.CopyToAsync(fileSteam);
+                }
+                p.PhotoCover = fileName;
+            }
+            else
+            {
+                p.PhotoCover = "default.jpg"; // default image as a black photo
+            }
+
+            if (ModelState.IsValid)
+            {
+                db.Playlists.Add(p);
+                db.SaveChanges();
+                TempData["message"] = "The playlist was added";
+                TempData["messageType"] = "alert alert-success";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["message"] = "The playlist was not added successfully";
+                TempData["messageType"] = " alert alert-danger";
+                return View(p);
+            }
+        }
+
+        [Authorize(Roles = "User,Admin,Artist")]
+        public IActionResult Show(int id)
+        {
+            SetAccessRights();
+            var p = db.Playlists.Include("SongPlaylists.Song")
+                                   .Include("SongPlaylists.Song.User")
+                                   .Include("User")
+                                   .Where(a => a.Id == id).First();
+
+            if (TempData.ContainsKey("message"))
+            {
+                ViewBag.Msg = TempData["message"];
+                ViewBag.MsgType = TempData["messageType"];
+            }
+            return View(p);
+
+        }
+
+        [Authorize(Roles = "Admin,Artist,User")]
+        public IActionResult Edit(int id)
+        {
+            Playlist p = db.Playlists.Where(a => a.Id == id).First();
+
+            SetAccessRights();
+
+            if (p.UserId == _userManager.GetUserId(User))
+            {
+                return View(p);
+            }
+
+            else
+            {
+                TempData["message"] = "You don't have the right to edit a playlist that doesn't belong to you";
+                TempData["messageType"] = "alert alert-danger";
+                return RedirectToAction("Index");
+            }
+
+        }
+
+        [Authorize(Roles = "Admin,Artist,User")]
+        [HttpPost]
+        public async Task<IActionResult> Edit(int id, Playlist reqp, IFormFile? PhotoCover)
+        {
+            Playlist p = db.Playlists.Where(a => a.Id == id).First();
+
+            if (ModelState.IsValid)
+            {
+                if (p.UserId == _userManager.GetUserId(User))
+                {
+                    p.PlaylistName = reqp.PlaylistName;
+                    p.Description = reqp.Description;
+
+                    if (PhotoCover != null)
+                    {
+                        var fileName = Path.GetFileName(PhotoCover.FileName);
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\files", fileName);
+                        using (var fileSteam = new FileStream(filePath, FileMode.Create))
+                        {
+                            await PhotoCover.CopyToAsync(fileSteam);
+                        }
+                        p.PhotoCover = fileName;
+                    }
+                    else
+                    {
+                        if (reqp.PhotoCover != null)
+                        {
+                            p.PhotoCover = reqp.PhotoCover;
+                        }
+                        else
+                        {
+                            if (p.PhotoCover == null)
+                            {
+                                p.PhotoCover = "default.jpg";
+                            }
+                        }
+                    }
+
+                    db.SongPlaylists.RemoveRange(db.SongPlaylists.Where(a => a.PlaylistId == p.Id));
+                    p.SongPlaylists.Clear();
+                    foreach (var sp in reqp.SongPlaylists)
+                    {
+                        SongPlaylist songPlaylist = new SongPlaylist();
+                        songPlaylist.SongId = sp.SongId;
+                        songPlaylist.PlaylistId = p.Id;
+                        db.SongPlaylists.Add(songPlaylist);
+                        p.SongPlaylists.Add(songPlaylist);
+                    }
+                    db.SaveChanges();
+                    
+                    TempData["message"] = "The playlist was edited successfully";
+                    TempData["messageType"] = "alert alert-success";
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    TempData["message"] = "You don't have the right to edit a playlist that doesn't belong to you";
+                    TempData["messageType"] = "alert alert-danger";
+                    return RedirectToAction("Index");
+                }
+            }
+            else
+            {
+                return View(reqp);
+            }
+
+
+        }
+
+        [Authorize(Roles = "Admin,Artist,User")]
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            Playlist p = db.Playlists.Include("SongPlaylists")
+                                        .Where(a => a.Id == id).First();
+            if (_userManager.GetUserId(User) == p.UserId || User.IsInRole("Admin"))
+            {
+                if (p.SongPlaylists.Count > 0)
+                {
+                    foreach (var sp in p.SongPlaylists)
+                    {
+                        db.SongPlaylists.Remove(sp);
+                    }
+                }
+
+
+                db.Playlists.Remove(p);
+                db.SaveChanges();
+                TempData["message"] = "The playlist was deleted";
+                TempData["messageType"] = " alert alert-success";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["message"] = "You don't have the right to delete a playlist that doesn't belong to you";
+                TempData["messageType"] = "alert alert-danger";
+                return RedirectToAction("Index");
+            }
+        }
+
+        [Authorize(Roles = "Admin,Artist,User")]
+        [HttpPost]
+        public IActionResult RemoveSong(int playlistId, int songId)
+        {
+            Playlist p = db.Playlists.Include("SongPlaylists")
+                                      .Where(a => a.Id == playlistId).First();
+
+            if (_userManager.GetUserId(User) == p.UserId)
+            {
+
+                foreach (var sp in p.SongPlaylists)
+                {
+                    if (sp.SongId == songId)
+                    {
+                        db.SongPlaylists.Remove(sp);
+                    }
+
+                }
+
+
+                db.SaveChanges();
+                TempData["message"] = "The song was deleted from the playlist";
+                TempData["messageType"] = " alert alert-success";
+                return Redirect("/Playlists/Show/" + p.Id);
+            }
+            else
+            {
+                TempData["message"] = "You don't have the right to remove the song from this playlist";
+                return Redirect("/Playlists/Show/" + p.Id);
+            }
+
+        }
+
+
+        private void SetAccessRights()
+        {
+
+            ViewBag.EsteAdmin = User.IsInRole("Admin");
+
+            ViewBag.UserCurent = _userManager.GetUserId(User);
         }
     }
 }
