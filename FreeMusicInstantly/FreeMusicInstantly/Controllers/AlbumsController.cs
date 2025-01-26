@@ -92,7 +92,8 @@ namespace FreeMusicInstantly.Controllers
         public IActionResult Show(int id)
         {
             SetAccessRights();
-            var cat = db.Albums.Include("SongAlbums.Song")
+            var cat = db.Albums.Include("SongAlbums")
+                                   .Include("SongAlbums.Song")
                                    .Include("SongAlbums.Song.User")
                                    .Include("User")
                                    .Where(a => a.Id == id).First();
