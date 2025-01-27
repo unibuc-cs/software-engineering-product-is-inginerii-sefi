@@ -4,6 +4,28 @@
     ViewData["Title"] = "Songs Index";
 }
 
+
+<div class="d-flex flex-row justify-content-around">
+    <form method="get">
+        <input type="text"
+               placeholder="Cauta piese: "
+               name="search"
+               value="@ViewBag.SearchString"
+               style="color: #33b249; height: 40px; width: 300px; padding: 5px; box-sizing: border-box; font-size: 14px;">
+        <button type="submit" class="buton_universal" style="height: 40px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search-heart" viewBox="0 0 16 16">
+                <path d="M6.5 4.482c1.664-1.673 5.825 1.254 0 5.018-5.825-3.764-1.664-6.69 0-5.018" />
+                <path d="M13 6.5a6.47 6.47 0 0 1-1.258 3.844q.06.044.115.098l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1-.1-.115h.002A6.5 6.5 0 1 1 13 6.5M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11" />
+            </svg>
+            Search
+        </button>
+    </form>
+</div>
+
+
+<br />
+<br />
+
 <div class="row">
     @foreach (var song in ViewBag.Songs)
     {
@@ -17,7 +39,7 @@
                             <path d="M5.5 4a.5.5 0 0 0-.5.5v5a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-5a.5.5 0 0 0-.5-.5zm1 7a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1z" />
                             <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2" />
                             <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1z" />
-                        </svg> Song name: @song.Title
+                        </svg> @song.Title
                     </p>
 
                 </h1>
@@ -66,6 +88,45 @@
         <br />
     }
 
+</div>
+
+<br />
+<br />
+<div class="d-flex flex-row justify-content-around">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+
+            <li class="page-item">
+                <a class="page-link" style="color: #33b249;"
+                   href="@ViewBag.PaginationBaseUrl=1" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            @for (int i = 1; i <= ViewBag.lastPage; i++)
+            {
+                if (@ViewBag.PaginaCurenta == i)
+                {
+                    <li class="page-item">
+                        <a class="page-link pagination pagina_curenta" style="color: #33b249;"
+                           href="@ViewBag.PaginationBaseUrl=@i">@(i)</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item">
+                        <a class="page-link pagination" style="color: #33b249;"
+                           href="@ViewBag.PaginationBaseUrl=@i">@(i)</a>
+                    </li>
+                }
+            }
+            <li class="page-item">
+                <a class="page-link" style="color: #33b249;"
+                   href="@ViewBag.PaginationBaseUrl=@(ViewBag.lastPage)" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 </div>
 
 @* <div class="d-flex justify-content-center"> *@
