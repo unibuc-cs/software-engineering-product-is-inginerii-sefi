@@ -110,10 +110,20 @@ namespace FreeMusicInstantly.Controllers
         public IActionResult Show(int id)
         {
             SetAccessRights();
+            var userId = _userManager.GetUserId(User);
             var p = db.Playlists.Include("SongPlaylists.Song")
                                    .Include("SongPlaylists.Song.User")
                                    .Include("User")
                                    .Where(a => a.Id == id).First();
+            if(p.UserId != userId) {
+                var ownerFriendship = db.Friendships
+                    .Where(f => (f.User1Id == userId && f.User2Id == p.UserId) || (f.User1Id == p.UserId && f.User2Id == userId));
+                if(ownerFriendship.Count() == 0) {
+                    TempData["message"] = "You don't have access to this playlist!";
+                    TempData["messageType"] = "alert alert-danger";
+                    return RedirectToAction("Index");
+                }
+            }
 
             if (TempData.ContainsKey("message"))
             {
