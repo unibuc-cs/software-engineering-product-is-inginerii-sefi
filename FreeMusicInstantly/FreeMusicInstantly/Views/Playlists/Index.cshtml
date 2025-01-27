@@ -25,8 +25,8 @@
 <div class="row">
     @foreach (var playlist in ViewBag.Playlists)
     {
-        <div class="card">
-            <img src="~/files/@playlist.PhotoCover" alt="@playlist.PlaylistName" style="max-width: 300px; height: auto; margin-bottom: 20px;" />
+        <div class="card" style="margin-bottom: 30px;">
+            <img src="~/files/@playlist.PhotoCover" alt="@playlist.PlaylistName" style="display: block; margin: 0 auto; max-width: 300px; height: 300px; object-fit: cover; margin-bottom: 20px; margin-top: 10px;" />
 
             <div class="card-body">
                 <h1>
