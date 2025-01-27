@@ -158,6 +158,14 @@ namespace FreeMusicInstantly.Controllers
                     }
 
                     db.SongPlaylists.RemoveRange(db.SongPlaylists.Where(a => a.PlaylistId == p.Id));
+                    if (reqp.SongPlaylists == null)
+                    {
+                        reqp.SongPlaylists = new List<SongPlaylist>();
+                    }
+                    if (p.SongPlaylists == null)
+                    {
+                        p.SongPlaylists = new List<SongPlaylist>();
+                    }
                     p.SongPlaylists.Clear();
                     foreach (var sp in reqp.SongPlaylists)
                     {

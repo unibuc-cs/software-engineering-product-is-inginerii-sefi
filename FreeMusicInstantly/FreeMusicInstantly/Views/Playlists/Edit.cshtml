@@ -4,9 +4,10 @@
     <div class="card-body">
         <h1 class="text-center">My Profile</h1>
 
-        @using (Html.BeginForm(actionName: "Edit", controllerName: "Playlists",
-        method: FormMethod.Post, routeValues: new { id = @Model.Id }))
-        {
+        @* @using (Html.BeginForm(actionName: "Edit", controllerName: "Playlists", *@
+        @* method: FormMethod.Post, routeValues: new { id = @Model.Id })) *@
+        @* { *@
+        <form enctype="multipart/form-data" asp-controller="Playlists" asp-action="Edit">
             <p>
                 <i class="bi bi-person"></i>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-journal-album" viewBox="0 0 16 16">
@@ -58,7 +59,8 @@
                     </svg> Cancel
                 </a>
             </div>
-        }
+		</form>
+        @* } *@
     </div>
 </div>
 
