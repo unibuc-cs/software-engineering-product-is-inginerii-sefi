@@ -6,8 +6,7 @@
     },
     "mssql2": {
       "type": "mssql",
-      "connectionId": "ConnectionStrings:Spotify",
-      "dynamicId": null
+      "connectionId": "ConnectionStrings:Spotify"
     }
   }
 }
