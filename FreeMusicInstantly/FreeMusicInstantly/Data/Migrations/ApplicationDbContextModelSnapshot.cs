@@ -99,7 +99,6 @@ namespace FreeMusicInstantly.Data.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("SongFile")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")

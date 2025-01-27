@@ -1,5 +1,6 @@
 ﻿using FreeMusicInstantly.Data;
 using FreeMusicInstantly.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,61 +20,248 @@ namespace FreeMusicInstantly.Controllers
             _userManager = userManager;
             _roleManager = roleManager;
         }
+        [Authorize(Roles = "User,Admin,Artist")]
         public IActionResult Index()
         {
-            var songs = db.Songs.Include("User")
-                                .Include(s => s.SongAlbums)
-                                .ThenInclude(sa => sa.Album)
-                                .OrderBy(p => p.Title)
-                                .ToList();
-            int perPage = 9;
-            string search = "";
-            if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
-            {   search = Convert.ToString(HttpContext.Request.Query["search"]);
-                songs = db.Songs.Include("User")
-                                .Include(s => s.SongAlbums)
-                                .ThenInclude(sa => sa.Album)
-                                .Where(p => p.Title.Contains(search))
-                                .OrderBy(p => p.Title)
-                                .ToList();
+            SetAccessRights();
+            var cat = db.Songs.Where(x => x.UserId == _userManager.GetUserId(User)).Include("User");
+            
+            ViewBag.Songs = cat;
+            if (TempData.ContainsKey("message"))
+            {
+                ViewBag.Msg = TempData["message"];
+                ViewBag.MsgType = TempData["messageType"];
             }
-            ViewBag.SearchString = search;
 
-            var totalItems = songs.Count();
-            var page = Convert.ToInt32(HttpContext.Request.Query["page"]);
-            var offset = 0;
-            if(!page.Equals(0))
-            {
-                offset = (page - 1) * perPage;
-            }
-            var paginatedSongs = songs.Skip(offset).Take(perPage).ToList();
-            for (int i = 0; i < paginatedSongs.Count(); i++)
-            {
-                paginatedSongs[i].SongAlbums = paginatedSongs[i].SongAlbums.Take(1).ToList();
-            }
-            ViewBag.Songs = paginatedSongs;
-            ViewBag.LastPage = Math.Ceiling((float)totalItems / (float)perPage);
 
-            if (search != "")
+            return View();
+            //var songs = db.Songs.Include("User")
+            //                    .Include(s => s.SongAlbums)
+            //                    .ThenInclude(sa => sa.Album)
+            //                    .OrderBy(p => p.Title)
+            //                    .ToList();
+            //int perPage = 9;
+            //string search = "";
+            //if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+            //{   search = Convert.ToString(HttpContext.Request.Query["search"]);
+            //    songs = db.Songs.Include("User")
+            //                    .Include(s => s.SongAlbums)
+            //                    .ThenInclude(sa => sa.Album)
+            //                    .Where(p => p.Title.Contains(search))
+            //                    .OrderBy(p => p.Title)
+            //                    .ToList();
+            //}
+            //ViewBag.SearchString = search;
+
+            //var totalItems = songs.Count();
+            //var page = Convert.ToInt32(HttpContext.Request.Query["page"]);
+            //var offset = 0;
+            //if(!page.Equals(0))
+            //{
+            //    offset = (page - 1) * perPage;
+            //}
+            //var paginatedSongs = songs.Skip(offset).Take(perPage).ToList();
+            //for (int i = 0; i < paginatedSongs.Count(); i++)
+            //{
+            //    paginatedSongs[i].SongAlbums = paginatedSongs[i].SongAlbums.Take(1).ToList();
+            //}
+            //ViewBag.Songs = paginatedSongs;
+            //ViewBag.LastPage = Math.Ceiling((float)totalItems / (float)perPage);
+
+            //if (search != "")
+            //{
+            //    ViewBag.PaginationBaseUrl = "/Songs/Index/?search=" + search + "&page";
+            //}
+            //else
+            //{
+            //    ViewBag.PaginationBaseUrl = "/Songs/Index/?page";
+            //}
+            //return View();
+        }
+        [Authorize(Roles = "User,Admin,Artist")]
+        public IActionResult Show(int id)
+        {
+            SetAccessRights();
+            var cat = db.Songs.Include("User")
+                               .Where(a => a.Id == id).First();
+
+
+            if (TempData.ContainsKey("message"))
             {
-                ViewBag.PaginationBaseUrl = "/Songs/Index/?search=" + search + "&page";
+                ViewBag.Msg = TempData["message"];
+                ViewBag.MsgType = TempData["messageType"];
+            }
+            return View(cat);
+
+
+        }
+
+        [Authorize(Roles = "Admin,Artist")]
+        public IActionResult New()
+        {
+            Song cat = new Song();
+            return View(cat);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin,Artist")]
+        public async Task<IActionResult> New(Song cat, IFormFile? SongFile)
+        {
+            
+            cat.UserId = _userManager.GetUserId(User);
+            if (SongFile != null)
+            {
+                var fileName = Path.GetFileName(SongFile.FileName);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), ".wwwroot\\files", fileName);
+                using (var fileSteam = new FileStream(filePath, FileMode.Create))
+                {
+                    await SongFile.CopyToAsync(fileSteam);
+                }
+                cat.SongFile = fileName;
             }
             else
             {
-                ViewBag.PaginationBaseUrl = "/Songs/Index/?page";
+                cat.SongFile = "nice_file.mp3"; 
             }
-            return View();
+
+
+            if (ModelState.IsValid)
+            {
+                db.Songs.Add(cat);
+                db.SaveChanges();
+                TempData["message"] = "The song was added";
+                TempData["messageType"] = "alert alert-success";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["message"] = "The song was not added successfully";
+                TempData["messageType"] = " alert alert-danger";
+                return View(cat);
+            }
         }
 
-        public IActionResult Show(int id)
+
+        [Authorize(Roles = "Admin,Artist")]
+        public IActionResult Edit(int id)
         {
-            var song = db.Songs.Include("SongAlbums.Album").First(p => p.Id == id);
-            if (song == null)
+            Song cat = db.Songs.Where(a => a.Id == id).First();
+
+            SetAccessRights();
+
+            if (cat.UserId == _userManager.GetUserId(User))
             {
-                return NotFound();
+                return View(cat);
             }
-            ViewBag.PhotoCover = song.SongAlbums.First().Album.PhotoCover;
-            return View(song);
+
+            else
+            {
+                TempData["message"] = "You don't have the right to edit a song that doesn't belong to you";
+                TempData["messageType"] = "alert alert-danger";
+                return RedirectToAction("Show", new { id = id });
+            }
+
         }
-    }
+        [Authorize(Roles = "Admin,Artist")]
+        [HttpPost]
+        public async Task<IActionResult> Edit(int id, Song reqcat, IFormFile? SongFile)
+        {
+            Song cat = db.Songs.Where(a => a.Id == id).FirstOrDefault();
+
+            if (cat == null)
+            {
+                TempData["message"] = "The song does not exist.";
+                TempData["messageType"] = "alert alert-danger";
+                return RedirectToAction("Index");
+            }
+
+            if (ModelState.IsValid)
+            {
+                if (cat.UserId == _userManager.GetUserId(User))
+                {
+                    
+                    cat.Title = reqcat.Title;
+                    cat.Description = reqcat.Description;
+                   
+
+                    if (SongFile != null)
+                    {
+                        
+                        if (Path.GetExtension(SongFile.FileName).ToLower() == ".mp3")
+                        {
+                            var fileName = Path.GetFileName(SongFile.FileName);
+                            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\files", fileName);
+
+                           
+                            using (var fileStream = new FileStream(filePath, FileMode.Create))
+                            {
+                                await SongFile.CopyToAsync(fileStream);
+                            }
+
+                           
+                            cat.SongFile = fileName;
+                        }
+                        else
+                        {
+                            TempData["message"] = "Invalid file type. Please upload an MP3 file.";
+                            TempData["messageType"] = "alert alert-danger";
+                            return View(reqcat);
+                        }
+                    }
+
+                    db.SaveChanges();
+
+                    TempData["message"] = "The song was edited successfully.";
+                    TempData["messageType"] = "alert alert-success";
+                    return RedirectToAction("Show", new { id = id });
+                }
+                else
+                {
+                    TempData["message"] = "You don't have the right to edit a song that doesn't belong to you.";
+                    TempData["messageType"] = "alert alert-danger";
+                    return RedirectToAction("Show", new { id = id });
+                }
+            }
+            else
+            {
+                TempData["message"] = "The song was not edited successfully. Please correct the errors.";
+                TempData["messageType"] = "alert alert-danger";
+                return View(reqcat);
+            }
+        }
+
+
+        [Authorize(Roles = "Admin,Artist")]
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            Song cat = db.Songs.Where(a => a.Id == id).First();
+            if (_userManager.GetUserId(User) == cat.UserId || User.IsInRole("Admin"))
+            {
+                db.Songs.Remove(cat);
+                db.SaveChanges();
+                TempData["message"] = "The song was deleted";
+                TempData["messageType"] = " alert alert-success";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["message"] = "You don't have the right to delete a song that doesn't belong to you";
+                TempData["messageType"] = "alert alert-danger";
+                return RedirectToAction("Index");
+            }
+        }
+
+        
+        private void SetAccessRights()
+        {
+
+            ViewBag.EsteAdmin = User.IsInRole("Admin");
+
+            ViewBag.UserCurent = _userManager.GetUserId(User);
+        }
+
+
+    
+}
 }
