@@ -161,6 +161,24 @@ namespace proiectDAW.Controllers
         }
 
         [Authorize(Roles = "User,Admin,Artist")]
+        public async Task<ActionResult> ShowArtist(string id)
+        {
+
+            ViewBag.EsteAdmin = User.IsInRole("Admin");
+            ViewBag.UserCurent = _userManager.GetUserId(User);
+            ViewBag.EsteArtist = User.IsInRole("Artist");
+
+            ApplicationUser user = (ApplicationUser)db.Users.Find(id);
+
+            var artistSongs = db.Songs.Where(s => s.UserId == id);
+            var artistAlbums = db.Albums.Where(a => a.UserId == id);
+            ViewBag.artistSongs = artistSongs;
+            ViewBag.artistAlbums = artistAlbums;
+
+            return View(user);
+        }
+
+        [Authorize(Roles = "User,Admin,Artist")]
         public async Task<ActionResult> Edit()
         {
             var currentUserId = _userManager.GetUserId(User);
