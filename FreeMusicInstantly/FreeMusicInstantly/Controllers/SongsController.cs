@@ -23,16 +23,60 @@ namespace FreeMusicInstantly.Controllers
         [Authorize(Roles = "User,Admin,Artist")]
         public IActionResult Index()
         {
-            SetAccessRights();
-            var cat = db.Songs.Where(x => x.UserId == _userManager.GetUserId(User)).Include("User");
-            
-            ViewBag.Songs = cat;
+            var search = "";
+
+            var songs = db.Songs.Include("User");
+
+            if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+            {
+                search = Convert.ToString(HttpContext.Request.Query["search"]).Trim();
+                List<int> SongIds = db.Songs
+                                       .Where(song => song.Title.Contains(search))
+                                       .Select(song => song.Id)
+                                       .ToList();
+                songs = db.Songs
+                            .Where(song => SongIds.Contains(song.Id))
+                            .Include("User")
+                            .OrderBy(song => song.Title);
+            }
+
+            ViewBag.Songs = songs;
             if (TempData.ContainsKey("message"))
             {
                 ViewBag.Msg = TempData["message"];
                 ViewBag.MsgType = TempData["messageType"];
             }
+            ViewBag.SearchString = search;
+            int _perPage = 6;
+            int totalItems = songs.Count();
 
+
+            var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
+
+            var offset = 0;
+
+            ViewBag.PaginaCurenta = currentPage;
+
+            if (!currentPage.Equals(0))
+            {
+                offset = (currentPage - 1) * _perPage;
+            }
+            var paginatedSongs = songs.Skip(offset).Take(_perPage);
+
+            ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)_perPage);
+            ViewBag.Songs = paginatedSongs;
+
+            SetAccessRights();
+
+            if (search != "")
+            {
+                ViewBag.PaginationBaseUrl = "/Songs/Index/?search="
+                + search + "&page";
+            }
+            else
+            {
+                ViewBag.PaginationBaseUrl = "/Songs/Index/?page";
+            }
 
             return View();
             //var songs = db.Songs.Include("User")
