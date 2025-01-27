@@ -1,4 +1,5 @@
 ﻿using FreeMusicInstantly.Data;
+using FreeMusicInstantly.Data.Migrations;
 using FreeMusicInstantly.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -24,11 +25,26 @@ namespace FreeMusicInstantly.Controllers
         public IActionResult Index()
         {
             SetAccessRights();
-            var cat = db.Albums.Where(x => x.UserId == _userManager.GetUserId(User)).Include("User");
+            var cat = db.Albums.Include("User");
+            var search = "";
             foreach (Album c in cat)
             {
                 c.NrSongs = db.SongAlbums.Where(a => a.AlbumId == c.Id).Count();
             }
+
+            if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+            {
+                search = Convert.ToString(HttpContext.Request.Query["search"]).Trim();
+                List<int> albumIds = db.Albums
+                                       .Where(album => album.AlbumName.Contains(search))
+                                       .Select(album => album.Id)
+                                       .ToList();
+                cat = db.Albums
+                            .Where(album => albumIds.Contains(album.Id))
+                            .Include("User")
+                            .OrderBy(album => album.AlbumName);
+            }
+
             ViewBag.Albums = cat;
             if (TempData.ContainsKey("message"))
             {
