@@ -20,6 +20,9 @@ namespace FreeMusicInstantly.Data
         public DbSet<Playlist> Playlists { get; set; }
         public DbSet<SongPlaylist> SongPlaylists { get; set; }
 
+        public DbSet<Friendship> Friendships { get; set; }
+        public DbSet<FriendRequest> FriendRequests { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -59,6 +62,27 @@ namespace FreeMusicInstantly.Data
                 .HasOne(pl => pl.Playlist)
                 .WithMany(pl => pl.SongPlaylists)
                 .HasForeignKey(pl => pl.PlaylistId);
+
+            modelBuilder.Entity<Friendship>()
+                .HasOne(f => f.User1)
+                .WithMany()
+                .HasForeignKey(f => f.User1Id);
+
+            modelBuilder.Entity<Friendship>()
+                .HasOne(f => f.User2)
+                .WithMany()
+                .HasForeignKey(f => f.User2Id);
+
+            modelBuilder.Entity<FriendRequest>()
+                .HasOne(fr => fr.Sender)
+                .WithMany(u => u.SentFriendRequests)
+                .HasForeignKey(fr => fr.SenderId);
+
+            modelBuilder.Entity<FriendRequest>()
+                .HasOne(fr => fr.Receiver)
+                .WithMany(u => u.ReceivedFriendRequests)
+                .HasForeignKey(fr => fr.ReceiverId);
+
         }
 
     }

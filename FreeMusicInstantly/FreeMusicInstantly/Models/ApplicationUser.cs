@@ -18,6 +18,9 @@ namespace FreeMusicInstantly.Models
         public string? MyMusicDescription { get; set; }
         public string? Biography { get; set; }
 
+        public virtual ICollection<FriendRequest>? SentFriendRequests { get; set; }
+        public virtual ICollection<FriendRequest>? ReceivedFriendRequests { get; set; }
+
         [NotMapped]
         public IEnumerable<SelectListItem>? AllRoles { get; set; }
 
