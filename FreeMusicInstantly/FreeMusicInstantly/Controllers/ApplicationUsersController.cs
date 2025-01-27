@@ -172,6 +172,10 @@ namespace proiectDAW.Controllers
 
             var artistSongs = db.Songs.Where(s => s.UserId == id);
             var artistAlbums = db.Albums.Where(a => a.UserId == id);
+            foreach (Album c in artistAlbums)
+            {
+                c.NrSongs = db.SongAlbums.Where(a => a.AlbumId == c.Id).Count();
+            }
             ViewBag.artistSongs = artistSongs;
             ViewBag.artistAlbums = artistAlbums;
 
