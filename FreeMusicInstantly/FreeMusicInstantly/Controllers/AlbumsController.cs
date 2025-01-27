@@ -172,6 +172,14 @@ namespace FreeMusicInstantly.Controllers
                     }
 
                     db.SongAlbums.RemoveRange(db.SongAlbums.Where(a => a.AlbumId == cat.Id));
+                    if (reqcat.SongAlbums == null)
+                    {
+                        reqcat.SongAlbums = new List<SongAlbum>();
+                    }
+                    if (cat.SongAlbums == null)
+                    {
+                        cat.SongAlbums = new List<SongAlbum>();
+                    }
                     cat.SongAlbums.Clear();
                     if (reqcat.SongAlbums != null)
                     {

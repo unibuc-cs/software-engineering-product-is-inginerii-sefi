@@ -1,11 +1,11 @@
-﻿<div class="card">
+﻿@model FreeMusicInstantly.Models.Playlist
+<div class="card">
     <div class="card-body">
         <h1 class="text-center mt-5">New playlist</h1>
         <br />
-        @using (Html.BeginForm(actionName: "New", controllerName: "Playlists"))
-        {
-        @model FreeMusicInstantly.Models.Playlist
-
+        @* @using (Html.BeginForm(actionName: "New", controllerName: "Playlists", method: FormMethod.Post))  *@
+        @* { *@
+        <form enctype="multipart/form-data" asp-controller="Playlists" asp-action="New">
 
             <p>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-journal-album" viewBox="0 0 16 16">
@@ -50,7 +50,7 @@
                     </svg> Cancel
                 </a>
             </div>
-
-        }
+        </form>
+        @* } *@
     </div>
 </div>
