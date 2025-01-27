@@ -72,7 +72,7 @@ namespace proiectDAW.Controllers
                           from sentRequest in userSentRequests.DefaultIfEmpty()
                           join receivedRequest in db.FriendRequests on new { A=userId, B=user.Id } equals new { A=receivedRequest.ReceiverId, B=receivedRequest.SenderId } into userReceivedRequests
                           from receivedRequest in userReceivedRequests.DefaultIfEmpty()
-                          where role.Name == artistRoleName
+                          where role.Name == artistRoleName && user.Id != userId
                           orderby user.UserName
                           select new
                           {
@@ -91,7 +91,6 @@ namespace proiectDAW.Controllers
             ViewBag.SearchString = search ?? "";
             ViewBag.UsersList = users;
             ViewBag.EsteAdmin = User.IsInRole("Admin");
-            ViewBag.CurrentUserId = userId;
             ViewBag.FromFriendsList = false;
             if (TempData.ContainsKey("message"))
             {
@@ -230,10 +229,11 @@ namespace proiectDAW.Controllers
         {
             var artistRoleName = "Artist";
             var search = "";
+            var currentUserId = _userManager.GetUserId(User);
             var artists = from user in db.Users
                                     join userRole in db.UserRoles on user.Id equals userRole.UserId
                                     join role in db.Roles on userRole.RoleId equals role.Id
-                                    where role.Name == artistRoleName
+                                    where role.Name == artistRoleName && user.Id != currentUserId
                                     orderby user.UserName
                                     select user;
             if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
