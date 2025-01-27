@@ -35,7 +35,7 @@ namespace proiectDAW.Controllers
         [Authorize(Roles = "User,Admin,Artist")]
         public async Task<IActionResult> MyProfile()
         {
-            var currentUserId = _userManager.GetUserId(User); 
+            var currentUserId = _userManager.GetUserId(User);
             var currentUser = await _userManager.FindByIdAsync(currentUserId);
 
             ViewBag.CurrentUserId = currentUserId;
@@ -52,10 +52,10 @@ namespace proiectDAW.Controllers
                 ViewBag.MsgType = TempData["messageType"];
             }
 
-            return View(currentUser); 
+            return View(currentUser);
         }
 
-   
+
         [Authorize(Roles = "Admin,User,Artist")]
         public IActionResult ViewUsers(string? search)
         {
@@ -98,24 +98,34 @@ namespace proiectDAW.Controllers
                 ViewBag.Msg = TempData["message"];
                 ViewBag.MsgType = TempData["messageType"];
             }
-            return View(users); 
+            return View(users);
         }
 
         [Authorize(Roles = "Admin,User,Artist")]
-        public IActionResult ViewFriends()
+        public IActionResult ViewFriends(string? search)
         {
             var userId = _userManager.GetUserId(User);
-            var friends = from friendship in db.Friendships
+            var friends_ = from friendship in db.Friendships
                           join user1 in db.Users on friendship.User1Id equals user1.Id
                           join user2 in db.Users on friendship.User2Id equals user2.Id
                           where friendship.User1Id == userId || friendship.User2Id == userId
                           select new
                           {
-                              User = friendship.User1Id == userId ? user2 : user1,
+                              User1 = user1,
+                              User2 = user2,
                               FriendshipId = friendship.Id,
-                              SentRequestId = (int?)null,
-                              ReceivedRequestId = (int?)null,
                           };
+            if(search != null) {
+                search = search.Trim();
+                friends_ = friends_.Where(f => f.User1.Id == userId ? f.User2.UserName.Contains(search) : f.User1.UserName.Contains(search));
+            }
+            var friends = friends_.Select(f => new {
+                User = f.User1.Id == userId ? f.User2 : f.User1,
+                f.FriendshipId,
+                SentRequestId = (int?)null,
+                ReceivedRequestId = (int?)null,
+            });
+            ViewBag.SearchString = search ?? "";
             ViewBag.UsersList = friends;
             ViewBag.EsteAdmin = User.IsInRole("Admin");
             ViewBag.CurrentUserId = userId;
@@ -246,7 +256,7 @@ namespace proiectDAW.Controllers
                 ViewBag.MsgType = TempData["messageType"];
             }
 
-            return View(artists); 
+            return View(artists);
         }
 
 
@@ -318,13 +328,13 @@ namespace proiectDAW.Controllers
 
             user.AllRoles = GetAllRoles();
 
-            var roleNames = await _userManager.GetRolesAsync(user); 
+            var roleNames = await _userManager.GetRolesAsync(user);
 
-           
+
             var currentUserRole = _roleManager.Roles
                                               .Where(r => roleNames.Contains(r.Name))
                                               .Select(r => r.Id)
-                                              .First(); 
+                                              .First();
             ViewBag.UserRole = currentUserRole;
 
             return View(user);
@@ -355,7 +365,7 @@ namespace proiectDAW.Controllers
                 user.MyMusicDescription = newData.MyMusicDescription;
                 user.Biography = newData.Biography;
 
-              
+
                 db.SaveChanges();
 
                 TempData["message"] = "The user was edited!";
@@ -377,7 +387,7 @@ namespace proiectDAW.Controllers
                          .Where(u => u.Id == id)
                          .First();
 
-           
+
 
             db.ApplicationUsers.Remove((ApplicationUser)user);
 
