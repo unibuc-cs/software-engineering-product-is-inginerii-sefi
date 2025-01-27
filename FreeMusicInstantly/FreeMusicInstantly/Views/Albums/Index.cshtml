@@ -21,8 +21,8 @@
 <div class="row">
     @foreach (var album in ViewBag.Albums)
     {
-        <div class="card">
-            <img src="~/files/@album.PhotoCover" alt="@album.AlbumName" style="max-width: 300px; height: auto; margin-bottom: 20px;" />
+        <div class="card" style="margin-bottom: 30px;">
+            <img src="~/files/@album.PhotoCover" alt="@album.AlbumName" style="display: block; margin: 0 auto; max-width: 300px; height: 300px; object-fit: cover; margin-bottom: 20px; margin-top: 10px;" />
 
             <div class="card-body">
                 <h1>
