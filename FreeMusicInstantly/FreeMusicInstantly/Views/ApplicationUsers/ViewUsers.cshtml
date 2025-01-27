@@ -7,7 +7,13 @@
         @ViewBag.Msg
     </h2>
 }
-<h1 style="text-align: center;">User page</h1>
+<h1 style="text-align: center;">
+    @if (ViewBag.FromFriendsList) {
+        <text>Friends List</text>
+    } else {
+        <text>Users List</text>
+    }
+</h1>
 <small class="fw-light text-muted"> Add people to see their profile</small>
 
 <br />
@@ -116,7 +122,9 @@
                 string friendshipActionName = friendshipActionText.Replace(" ", "");
                 int? requestId = data.SentRequestId ?? data.ReceivedRequestId;
                 int? friendshipId = data.FriendshipId;
+                string FromFriendsList = ViewBag.FromFriendsList ? "true" : "false";
                 <form asp-controller="ApplicationUsers" asp-action="@friendshipActionName">
+                    <input type="hidden" name="fromFriendsList" value=@FromFriendsList />
                     <input type="hidden" name="userId" value=@user.Id />
                     @if (requestId != null)
                     {

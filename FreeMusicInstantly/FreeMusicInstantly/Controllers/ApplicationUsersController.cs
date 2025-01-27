@@ -92,12 +92,40 @@ namespace proiectDAW.Controllers
             ViewBag.UsersList = users;
             ViewBag.EsteAdmin = User.IsInRole("Admin");
             ViewBag.CurrentUserId = userId;
+            ViewBag.FromFriendsList = false;
             if (TempData.ContainsKey("message"))
             {
                 ViewBag.Msg = TempData["message"];
                 ViewBag.MsgType = TempData["messageType"];
             }
             return View(users); 
+        }
+
+        [Authorize(Roles = "Admin,User,Artist")]
+        public IActionResult ViewFriends()
+        {
+            var userId = _userManager.GetUserId(User);
+            var friends = from friendship in db.Friendships
+                          join user1 in db.Users on friendship.User1Id equals user1.Id
+                          join user2 in db.Users on friendship.User2Id equals user2.Id
+                          where friendship.User1Id == userId || friendship.User2Id == userId
+                          select new
+                          {
+                              User = friendship.User1Id == userId ? user2 : user1,
+                              FriendshipId = friendship.Id,
+                              SentRequestId = (int?)null,
+                              ReceivedRequestId = (int?)null,
+                          };
+            ViewBag.UsersList = friends;
+            ViewBag.EsteAdmin = User.IsInRole("Admin");
+            ViewBag.CurrentUserId = userId;
+            ViewBag.FromFriendsList = true;
+            if (TempData.ContainsKey("message"))
+            {
+                ViewBag.Msg = TempData["message"];
+                ViewBag.MsgType = TempData["messageType"];
+            }
+            return View("ViewUsers", friends);
         }
 
         [Authorize(Roles = "Admin,User,Artist")]
@@ -167,7 +195,8 @@ namespace proiectDAW.Controllers
 
         [Authorize(Roles = "Admin,User,Artist")]
         [AcceptVerbs("Post")]
-        public IActionResult RemoveFriend(int friendshipId) {
+        public IActionResult RemoveFriend(int friendshipId, bool fromFriendsList) {
+            var redirect = fromFriendsList ? "ViewFriends" : "ViewUsers";
             var friendship = db.Friendships.Find(friendshipId);
             var userId = _userManager.GetUserId(User);
 
@@ -175,7 +204,7 @@ namespace proiectDAW.Controllers
             {
                 TempData["message"] = "Not authorized to delete this friendship!";
                 TempData["messageType"] = "alert alert-danger";
-                return RedirectToAction("ViewUsers");
+                return RedirectToAction(redirect);
             }
 
             db.Friendships.Remove(friendship);
@@ -183,7 +212,7 @@ namespace proiectDAW.Controllers
 
             TempData["message"] = "Friend removed!";
             TempData["messageType"] = "alert alert-success";
-            return RedirectToAction("ViewUsers");
+            return RedirectToAction(redirect);
         }
 
         [Authorize(Roles = "Admin,Artist,User")]
