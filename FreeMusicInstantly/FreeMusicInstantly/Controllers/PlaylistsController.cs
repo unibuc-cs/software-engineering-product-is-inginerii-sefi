@@ -26,6 +26,7 @@ namespace FreeMusicInstantly.Controllers
             var playlists = db.Playlists.Include("SongPlaylists")
                                         .Where(x => x.UserId == _userManager.GetUserId(User)).Include("User");
             ViewBag.Playlists = playlists;
+            ViewBag.IsOwner = true;
             if (TempData.ContainsKey("message"))
             {
                 ViewBag.Msg = TempData["message"];
@@ -34,6 +35,31 @@ namespace FreeMusicInstantly.Controllers
 
 
             return View();
+        }
+
+        public IActionResult IndexFriend(string friendId)
+        {
+            SetAccessRights();
+            var currentUserId = _userManager.GetUserId(User);
+            var friendship = db.Friendships
+                               .Where(f => (f.User1Id == currentUserId && f.User2Id == friendId) || (f.User1Id == friendId && f.User2Id == currentUserId))
+                               .FirstOrDefault();
+            if (friendship == null)
+            {
+                TempData["message"] = "You are not friends with this user!";
+                TempData["messageType"] = "alert alert-danger";
+                return RedirectToAction("ViewUsers", "ApplicationUsers");
+            }
+            var playlists = db.Playlists.Include("SongPlaylists")
+                                        .Where(x => x.UserId == friendId).Include("User");
+            ViewBag.Playlists = playlists;
+            ViewBag.IsOwner = false;
+            if (TempData.ContainsKey("message"))
+            {
+                ViewBag.Msg = TempData["message"];
+                ViewBag.MsgType = TempData["messageType"];
+            }
+            return View("Index");
         }
 
         [Authorize(Roles = "Admin,Artist,User")]
