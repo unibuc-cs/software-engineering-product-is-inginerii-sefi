@@ -57,31 +57,41 @@ namespace proiectDAW.Controllers
 
    
         [Authorize(Roles = "Admin,User,Artist")]
-        public IActionResult ViewUsers()
+        public IActionResult ViewUsers(string? search)
         {
             var artistRoleName = "User";
-            var search = "";
+            var userId = _userManager.GetUserId(User);
             var users = from user in db.Users
                           join userRole in db.UserRoles on user.Id equals userRole.UserId
                           join role in db.Roles on userRole.RoleId equals role.Id
+                          join friendship in db.Friendships on new { A=userId, B=user.Id } equals new { A=friendship.User1Id, B=friendship.User2Id } into userFriendships1
+                          from friendship1 in userFriendships1.DefaultIfEmpty()
+                          join friendship in db.Friendships on new { A=userId, B=user.Id } equals new { A=friendship.User2Id, B=friendship.User1Id } into userFriendships2
+                          from friendship2 in userFriendships2.DefaultIfEmpty()
+                          join sentRequest in db.FriendRequests on new { A=userId, B=user.Id } equals new { A=sentRequest.SenderId, B=sentRequest.ReceiverId } into userSentRequests
+                          from sentRequest in userSentRequests.DefaultIfEmpty()
+                          join receivedRequest in db.FriendRequests on new { A=userId, B=user.Id } equals new { A=receivedRequest.ReceiverId, B=receivedRequest.SenderId } into userReceivedRequests
+                          from receivedRequest in userReceivedRequests.DefaultIfEmpty()
                           where role.Name == artistRoleName
                           orderby user.UserName
-                          select user;
+                          select new
+                          {
+                              User = user,
+                              FriendshipId = friendship1 != null ? friendship1.Id : friendship2 != null ? friendship2.Id : (int?)null,
+                              SentRequestId = sentRequest != null ? sentRequest.Id : (int?)null,
+                              ReceivedRequestId = receivedRequest != null ? receivedRequest.Id : (int?)null,
+                          };
 
-            if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+            if (search != null)
             {
-                search = Convert.ToString(HttpContext.Request.Query["search"]).Trim();
-                users = (from user in db.Users
-                         join userRole in db.UserRoles on user.Id equals userRole.UserId
-                         join role in db.Roles on userRole.RoleId equals role.Id
-                         where role.Name == artistRoleName && user.UserName.Contains(search)
-                         orderby user.UserName
-                         select user);
-
+                search = search.Trim();
+                users = users.Where(u => u.User.UserName.Contains(search));
             }
-            ViewBag.SearchString = search;
+
+            ViewBag.SearchString = search ?? "";
             ViewBag.UsersList = users;
             ViewBag.EsteAdmin = User.IsInRole("Admin");
+            ViewBag.CurrentUserId = userId;
             if (TempData.ContainsKey("message"))
             {
                 ViewBag.Msg = TempData["message"];
@@ -90,7 +100,92 @@ namespace proiectDAW.Controllers
             return View(users); 
         }
 
-       
+        [Authorize(Roles = "Admin,User,Artist")]
+        [AcceptVerbs("Post")]
+        public IActionResult SendFriendRequest(string userId) {
+            var currentUserId = _userManager.GetUserId(User);
+
+            var friendRequest = new FriendRequest
+            {
+                SenderId = currentUserId,
+                ReceiverId = userId,
+            };
+            db.FriendRequests.Add(friendRequest);
+            db.SaveChanges();
+
+            TempData["message"] = "Friend request sent!";
+            TempData["messageType"] = "alert alert-success";
+            return RedirectToAction("ViewUsers");
+        }
+
+        [Authorize(Roles = "Admin,User,Artist")]
+        [AcceptVerbs("Post")]
+        public IActionResult AcceptFriendRequest(string userId, int requestId) {
+            var request = db.FriendRequests.Find(requestId);
+
+            if (request.ReceiverId != _userManager.GetUserId(User))
+            {
+                TempData["message"] = "Not authorized to accept this friend request!";
+                TempData["messageType"] = "alert alert-danger";
+                return RedirectToAction("ViewUsers");
+            }
+
+            db.FriendRequests.Remove(request);
+
+            var friendship = new Friendship
+            {
+                User1Id = request.SenderId,
+                User2Id = request.ReceiverId,
+            };
+            db.Friendships.Add(friendship);
+            db.SaveChanges();
+
+            TempData["message"] = "Friend request accepted!";
+            TempData["messageType"] = "alert alert-success";
+            return RedirectToAction("ViewUsers");
+        }
+
+        [Authorize(Roles = "Admin,User,Artist")]
+        [AcceptVerbs("Post")]
+        public IActionResult CancelFriendRequest(int requestId) {
+            var request = db.FriendRequests.Find(requestId);
+
+            if (request.SenderId != _userManager.GetUserId(User))
+            {
+                TempData["message"] = "Not authorized to cancel this friend request!";
+                TempData["messageType"] = "alert alert-danger";
+                return RedirectToAction("ViewUsers");
+            }
+
+            db.FriendRequests.Remove(request);
+            db.SaveChanges();
+
+            TempData["message"] = "Friend request canceled!";
+            TempData["messageType"] = "alert alert-success";
+            return RedirectToAction("ViewUsers");
+        }
+
+        [Authorize(Roles = "Admin,User,Artist")]
+        [AcceptVerbs("Post")]
+        public IActionResult RemoveFriend(int friendshipId) {
+            var friendship = db.Friendships.Find(friendshipId);
+            var userId = _userManager.GetUserId(User);
+
+            if (friendship.User1Id != userId && friendship.User2Id != userId)
+            {
+                TempData["message"] = "Not authorized to delete this friendship!";
+                TempData["messageType"] = "alert alert-danger";
+                return RedirectToAction("ViewUsers");
+            }
+
+            db.Friendships.Remove(friendship);
+            db.SaveChanges();
+
+            TempData["message"] = "Friend removed!";
+            TempData["messageType"] = "alert alert-success";
+            return RedirectToAction("ViewUsers");
+        }
+
         [Authorize(Roles = "Admin,Artist,User")]
         public IActionResult ViewArtists()
         {
