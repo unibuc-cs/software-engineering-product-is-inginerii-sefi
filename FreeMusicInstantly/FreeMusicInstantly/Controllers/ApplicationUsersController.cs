@@ -78,7 +78,7 @@ namespace proiectDAW.Controllers
         }
 
        
-        [Authorize(Roles = "Admin,Artist,Artist")]
+        [Authorize(Roles = "Admin,Artist,User")]
         public IActionResult ViewArtists()
         {
             var artistRoleName = "Artist";  
