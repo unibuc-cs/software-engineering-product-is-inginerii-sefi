@@ -60,6 +60,7 @@ namespace proiectDAW.Controllers
         public IActionResult ViewUsers()
         {
             var artistRoleName = "User";
+            var search = "";
             var users = from user in db.Users
                           join userRole in db.UserRoles on user.Id equals userRole.UserId
                           join role in db.Roles on userRole.RoleId equals role.Id
@@ -67,6 +68,18 @@ namespace proiectDAW.Controllers
                           orderby user.UserName
                           select user;
 
+            if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+            {
+                search = Convert.ToString(HttpContext.Request.Query["search"]).Trim();
+                users = (from user in db.Users
+                         join userRole in db.UserRoles on user.Id equals userRole.UserId
+                         join role in db.Roles on userRole.RoleId equals role.Id
+                         where role.Name == artistRoleName && user.UserName.Contains(search)
+                         orderby user.UserName
+                         select user);
+
+            }
+            ViewBag.SearchString = search;
             ViewBag.UsersList = users;
             ViewBag.EsteAdmin = User.IsInRole("Admin");
             if (TempData.ContainsKey("message"))
@@ -81,15 +94,26 @@ namespace proiectDAW.Controllers
         [Authorize(Roles = "Admin,Artist,User")]
         public IActionResult ViewArtists()
         {
-            var artistRoleName = "Artist";  
+            var artistRoleName = "Artist";
+            var search = "";
             var artists = from user in db.Users
                                     join userRole in db.UserRoles on user.Id equals userRole.UserId
                                     join role in db.Roles on userRole.RoleId equals role.Id
                                     where role.Name == artistRoleName
                                     orderby user.UserName
                                     select user;
+            if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+            {
+                search = Convert.ToString(HttpContext.Request.Query["search"]).Trim();
+                artists = (from user in db.Users
+                         join userRole in db.UserRoles on user.Id equals userRole.UserId
+                         join role in db.Roles on userRole.RoleId equals role.Id
+                         where role.Name == artistRoleName && user.UserName.Contains(search)
+                         orderby user.UserName
+                         select user);
 
-           
+            }
+            ViewBag.SearchString = search;
             ViewBag.UsersList = artists;
             ViewBag.EsteAdmin = User.IsInRole("Admin");
             if (TempData.ContainsKey("message"))
