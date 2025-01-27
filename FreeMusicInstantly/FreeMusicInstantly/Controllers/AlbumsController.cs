@@ -46,6 +46,7 @@ namespace FreeMusicInstantly.Controllers
             }
 
             ViewBag.Albums = cat;
+            ViewBag.SearchString = search;
             if (TempData.ContainsKey("message"))
             {
                 ViewBag.Msg = TempData["message"];
