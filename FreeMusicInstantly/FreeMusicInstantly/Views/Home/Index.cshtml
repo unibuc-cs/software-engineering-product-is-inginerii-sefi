@@ -2,74 +2,316 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center"> 
+    <h1 class="display-4">Welcome!</h1> 
+    <h7 class="text-muted">Login or Register to have access to our amazing app!</h7>
+</div>
 
 
-    <button type="submit" class="buton_universal" >
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-circle" viewBox="0 0 16 16">
-            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
-            <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445" />
-        </svg>
-        Play
-    </button>
 
-    <button type="submit" class="buton_universal">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
-            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-        </svg>
-        View Profile
-    </button>
+<div id="hcg-slider-1" class="hcg-slider">
+	<div class="hcg-slide-container">
+		<div class="hcg-slider-body">
+			<a class="hcg-slides animated" style="display:flex">
+				<span class="hcg-slide-number">1/5</span>
+				<img src="https://html-generator.com/uploads/images/2025/01/28/562378RQLALO47_.jpg" alt="562378RQLALO47_.jpg">
+				<span class="hcg-slide-text">562378RQLALO47_.jpg</span>
+			</a>
+		</div>
+		<a href="#" id="hcg-slide-prev">❮</a>
+		<a href="#" id="hcg-slide-next">❯</a>
+	</div>
+	<div class="hcg-slide-dot-control"></div>
+</div>
 
-    <button type="submit" class="buton_universal">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
-            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
-            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
-        </svg>
-       Add
-    </button>
 
-    <button type="submit" class="buton_universal">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-add" viewBox="0 0 16 16">
-            <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
-            <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" />
-        </svg>
-        Add Friend
-    </button>
+<style>
+	#hcg-slider-1 .hcg-slide-container {
+		width: auto;
+		height: auto;
+	}
+
+	.hcg-slider {
+		text-align: center;
+		font-family: Arial, Helvetica, sans-serif;
+	}
+
+	.hcg-slide-container {
+		max-width: 100%;
+		display: inline-block;
+		position: relative;
+	}
+
+	.hcg-slides {
+		display: none;
+		overflow: hidden;
+		justify-content: center;
+		align-items: center;
+		border-radius: 5px;
+		border: solid 1px #a0a0a0;
+	}
+
+		.hcg-slides img {
+			max-width: 100%;
+			max-height: 100%;
+			display: inline-block;
+		}
+
+	.hcg-slide-text {
+		color: #ffffff;
+		font-size: 14px;
+		padding: 3px 5px;
+		position: absolute;
+		bottom: 0;
+		border-radius: 5px;
+		left: 50%;
+		text-align: center;
+		text-shadow: 0 0 2px #000;
+		background-color: rgba(255,255,255,0.30);
+		display: inline-block;
+		transform: translate(-50%, -5px);
+	}
+
+	#hcg-slide-prev, #hcg-slide-next {
+		cursor: pointer;
+		position: absolute;
+		top: 50%;
+		width: auto;
+		padding: 16px;
+		margin-top: -22px;
+		color: #fff;
+		font-weight: bold;
+		font-size: 18px;
+		transition: 0.6s ease;
+		border-radius: 0 3px 3px 0;
+		text-decoration: none;
+		text-shadow: 1px 1px 5px #686868;
+	}
+
+	#hcg-slide-next {
+		right: 0;
+		border-radius: 3px 0 0 3px;
+	}
+
+	#hcg-slide-prev {
+		left: 0;
+		border-radius: 0 3px 3px 0;
+	}
+
+		#hcg-slide-prev:hover, #hcg-slide-next:hover {
+			background-color: #000c;
+		}
+
+	.hcg-slide-dot-control {
+		margin-top: 10px;
+		text-align: center;
+	}
+
+	.hcg-slide-dot {
+		cursor: pointer;
+		height: 13px;
+		width: 13px;
+		margin: 0 2px;
+		background-color: #bbb;
+		border-radius: 50%;
+		display: inline-block;
+	}
+
+		.hcg-slide-dot.dot-active {
+			background-color: #717171;
+		}
+
+	.hcg-slide-number {
+		color: #ffffff;
+		font-size: 12px;
+		padding: 4px 7px;
+		position: absolute;
+		border-radius: 5px;
+		top: 5px;
+		left: 5px;
+		background-color: rgba(255,255,255,0.30);
+	}
+	/************CSS Animation***********/
+
+	.animated {
+		animation-name: fadeIn;
+		animation-duration: 1s;
+	}
+	
+
+	.fadeIn {
+		animation-name: fadeIn;
+	}
+
+</style>
+
+
+
+<script>
+	(() => {
+	//If you want to add more images, add the link name and URL image URL in the array list below.
+		const images_list = [
+	
+	{
+		"url": "https://html-generator.com/uploads/images/2025/01/28/80404OL7J5G1T2F.jpg",
+		"alt": "",
+		"name": "",
+		"link": ""
+	},
+	{
+		"url": "https://html-generator.com/uploads/images/2025/01/28/562378RQLALO47_.jpg",
+		"alt": "",
+		"name": "",
+		"link": ""
+	},
+	{
+		"url": "https://html-generator.com/uploads/images/2025/01/28/23431UJLJ2YYI8A.jpg",
+		"alt": "",
+		"name": "",
+		"link": ""
+	}
+		];
+
+	// generated by https://www.html-code-generator.com/html/image-slideshow-generator
+		let slider_id = document.querySelector("#hcg-slider-1");
+
+		// append all images
+		let dots_div = "";
+		let images_div = "";
+		for (let i = 0; i < images_list.length; i++) {
+			// if no link without href="" tag
+			let href = (images_list[i].link == "" ? "":' href="'+images_list[i].link+'"');
+			images_div += '<a'+href+' class="hcg-slides animated"'+(i === 0 ? ' style="display:flex"':'')+'>'+
+							'<span class="hcg-slide-number">'+(i+1)+'/'+images_list.length+'</span>'+
+							'<img src="'+images_list[i].url+'" alt="'+images_list[i].name+'">'+
+							'<span class="hcg-slide-text">'+images_list[i].name+'</span>'+
+						 '</a>';
+			dots_div += '<a href="#" class="hcg-slide-dot'+(i === 0 ? ' dot-active':'')+'" data-id="'+i+'"></a>';
+		}
+		slider_id.querySelector(".hcg-slider-body").innerHTML = images_div;
+		slider_id.querySelector(".hcg-slide-dot-control").innerHTML = dots_div;
+
+		let slide_index = 0;
+
+		const images = slider_id.querySelectorAll(".hcg-slides");
+		const dots = slider_id.querySelectorAll(".hcg-slide-dot");
+		const prev_button = slider_id.querySelector("#hcg-slide-prev");
+		const next_button = slider_id.querySelector("#hcg-slide-next");
+
+		const showSlides = () => {
+			if (slide_index > images.length-1) {
+				slide_index = 0;
+			}
+			if (slide_index < 0) {
+				slide_index = images.length-1;
+			}
+			for (let i = 0; i < images.length; i++) {
+				images[i].style.display = "none";
+				dots[i].classList.remove("dot-active");
+				if (i == slide_index) {
+					images[i].style.display = "flex";
+					dots[i].classList.add("dot-active");
+				}
+			}
+		}
+
+		prev_button.addEventListener("click", event => {
+			event.preventDefault();
+			slide_index--;
+			showSlides();
+		}, false);
+
+		next_button.addEventListener("click", event => {
+			event.preventDefault();
+			slide_index++;
+			showSlides();
+		}, false);
+
+		const dot_click = event => {
+			event.preventDefault();
+			slide_index = event.target.dataset.id;
+			showSlides();
+		}
+
+		for (let i = 0; i < dots.length; i++) {
+			dots[i].addEventListener("click", dot_click, false);
+		}
+		setInterval(() => {
+			slide_index++;
+			showSlides();
+		}, 5000);
+	})();
+</script>
+
+
+
+
+@*     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+
+@*     <button type="submit" class="buton_universal" >
+@*         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-circle" viewBox="0 0 16 16"> *@
+@*             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" /> *@
+@*             <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445" /> *@
+@*         </svg> *@
+@*         Play *@
+@*     </button> *@
+
+@*     <button type="submit" class="buton_universal"> *@
+@*         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16"> *@
+@*             <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" /> *@
+@*             <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" /> *@
+@*         </svg> *@
+@*         View Profile *@
+@*     </button> *@
+
+@*     <button type="submit" class="buton_universal"> *@
+@*         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16"> *@
+@*             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" /> *@
+@*             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" /> *@
+@*         </svg> *@
+@*        Add *@
+@*     </button> *@
+
+@*     <button type="submit" class="buton_universal"> *@
+@*         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-add" viewBox="0 0 16 16"> *@
+@*             <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4" /> *@
+@*             <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" /> *@
+@*         </svg> *@
+@*         Add Friend *@
+@*     </button> *@
 
    
 
-    <button type="submit" class="buton_universal">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search-heart" viewBox="0 0 16 16">
-            <path d="M6.5 4.482c1.664-1.673 5.825 1.254 0 5.018-5.825-3.764-1.664-6.69 0-5.018" />
-            <path d="M13 6.5a6.47 6.47 0 0 1-1.258 3.844q.06.044.115.098l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1-.1-.115h.002A6.5 6.5 0 1 1 13 6.5M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11" />
-        </svg>
-        Search
-    </button>
+@*     <button type="submit" class="buton_universal"> *@
+@*         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search-heart" viewBox="0 0 16 16"> *@
+@*             <path d="M6.5 4.482c1.664-1.673 5.825 1.254 0 5.018-5.825-3.764-1.664-6.69 0-5.018" /> *@
+@*             <path d="M13 6.5a6.47 6.47 0 0 1-1.258 3.844q.06.044.115.098l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1-.1-.115h.002A6.5 6.5 0 1 1 13 6.5M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11" /> *@
+@*         </svg> *@
+@*         Search *@
+@*     </button> *@
 
-    <button type="submit" class="buton_stergere">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-pulse" viewBox="0 0 16 16">
-            <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053.918 3.995.78 5.323 1.508 7H.43c-2.128-5.697 4.165-8.83 7.394-5.857q.09.083.176.171a3 3 0 0 1 .176-.17c3.23-2.974 9.522.159 7.394 5.856h-1.078c.728-1.677.59-3.005.108-3.947C13.486.878 10.4.28 8.717 2.01zM2.212 10h1.315C4.593 11.183 6.05 12.458 8 13.795c1.949-1.337 3.407-2.612 4.473-3.795h1.315c-1.265 1.566-3.14 3.25-5.788 5-2.648-1.75-4.523-3.434-5.788-5" />
-            <path d="M10.464 3.314a.5.5 0 0 0-.945.049L7.921 8.956 6.464 5.314a.5.5 0 0 0-.88-.091L3.732 8H.5a.5.5 0 0 0 0 1H4a.5.5 0 0 0 .416-.223l1.473-2.209 1.647 4.118a.5.5 0 0 0 .945-.049l1.598-5.593 1.457 3.642A.5.5 0 0 0 12 9h3.5a.5.5 0 0 0 0-1h-3.162z" />
-        </svg>
-        Like
-    </button>
+@*     <button type="submit" class="buton_stergere"> *@
+@*         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-pulse" viewBox="0 0 16 16"> *@
+@*             <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053.918 3.995.78 5.323 1.508 7H.43c-2.128-5.697 4.165-8.83 7.394-5.857q.09.083.176.171a3 3 0 0 1 .176-.17c3.23-2.974 9.522.159 7.394 5.856h-1.078c.728-1.677.59-3.005.108-3.947C13.486.878 10.4.28 8.717 2.01zM2.212 10h1.315C4.593 11.183 6.05 12.458 8 13.795c1.949-1.337 3.407-2.612 4.473-3.795h1.315c-1.265 1.566-3.14 3.25-5.788 5-2.648-1.75-4.523-3.434-5.788-5" /> *@
+@*             <path d="M10.464 3.314a.5.5 0 0 0-.945.049L7.921 8.956 6.464 5.314a.5.5 0 0 0-.88-.091L3.732 8H.5a.5.5 0 0 0 0 1H4a.5.5 0 0 0 .416-.223l1.473-2.209 1.647 4.118a.5.5 0 0 0 .945-.049l1.598-5.593 1.457 3.642A.5.5 0 0 0 12 9h3.5a.5.5 0 0 0 0-1h-3.162z" /> *@
+@*         </svg> *@
+@*         Like *@
+@*     </button> *@
 
-    <button type="submit" class="buton_editare">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
-        </svg>
-        Edit
-    </button>
+@*     <button type="submit" class="buton_editare"> *@
+@*         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16"> *@
+@*             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" /> *@
+@*             <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" /> *@
+@*         </svg> *@
+@*         Edit *@
+@*     </button> *@
 
-    <button type="submit" class="buton_stergere">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
-            <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
-        </svg>
-        Delete
-    </button>
+@*     <button type="submit" class="buton_stergere"> *@
+@*         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16"> *@
+@*             <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" /> *@
+@*         </svg> *@
+@*         Delete *@
+@*     </button> *@
 
-</div>
+@* </div> *@

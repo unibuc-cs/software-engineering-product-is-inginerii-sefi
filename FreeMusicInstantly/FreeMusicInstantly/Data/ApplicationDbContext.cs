@@ -23,6 +23,8 @@ namespace FreeMusicInstantly.Data
         public DbSet<Friendship> Friendships { get; set; }
         public DbSet<FriendRequest> FriendRequests { get; set; }
 
+        public DbSet<Comment> Comments { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -82,6 +84,10 @@ namespace FreeMusicInstantly.Data
                 .HasOne(fr => fr.Receiver)
                 .WithMany(u => u.ReceivedFriendRequests)
                 .HasForeignKey(fr => fr.ReceiverId);
+            modelBuilder.Entity<Song>()
+              .HasMany(p => p.Comments)
+              .WithOne(c => c.Song)
+              .OnDelete(DeleteBehavior.Cascade);
 
         }
 
