@@ -125,10 +125,14 @@ namespace FreeMusicInstantly.Controllers
         [Authorize(Roles = "User,Admin,Artist")]
         public IActionResult Show(int id)
         {
-            SetAccessRights();
-            var cat = db.Songs.Include("User")
+            
+            Song cat = db.Songs.Include("User")
+                              .Include("Comments")
+                              .Include("Comments.User")
                                .Where(a => a.Id == id).First();
 
+           
+            SetAccessRights();
             if (TempData.ContainsKey("message"))
             {
                 ViewBag.Msg = TempData["message"];
@@ -138,6 +142,40 @@ namespace FreeMusicInstantly.Controllers
 
 
         }
+        [HttpPost]
+        [Authorize(Roles = "User,Admin,Artist")]
+        public IActionResult Show([FromForm] Comment comment)
+        {
+            comment.Date = DateTime.Now;
+            comment.UserId = _userManager.GetUserId(User);
+
+            if (ModelState.IsValid)
+            {
+                db.Comments.Add(comment);
+                db.SaveChanges();
+                TempData["message"] = "The comment was successfully added";
+                TempData["messageType"] = " alert alert-success";
+                return Redirect("/Songs/Show/" + comment.SongId);
+            }
+
+            else
+            {
+                Song bmk = db.Songs.Include("User")
+                                   .Include("Comments")
+                                   .Include("Comments.User")
+                                   .Where(b => b.Id == comment.SongId)
+                                   .First();
+
+                //ViewBag.UserCategories = db.Categories
+                //                          .Where(b => b.UserId == _userManager.GetUserId(User))
+                //                          .ToList();
+
+                SetAccessRights();
+
+                return View(bmk);
+            }
+        }
+
 
         [Authorize(Roles = "Admin,Artist")]
         public IActionResult New()
