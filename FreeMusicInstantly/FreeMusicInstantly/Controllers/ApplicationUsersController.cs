@@ -425,6 +425,12 @@ namespace proiectDAW.Controllers
         [HttpPost]
         public IActionResult Delete(string id)
         {
+            var friendRequests = db.FriendRequests.Where(fr => fr.SenderId == id || fr.ReceiverId == id);
+            db.FriendRequests.RemoveRange(friendRequests);
+
+            var friendships = db.Friendships.Where(f => f.User1Id == id || f.User2Id == id);
+            db.Friendships.RemoveRange(friendships);
+
             var user = db.Users
                          .Where(u => u.Id == id)
                          .First();
