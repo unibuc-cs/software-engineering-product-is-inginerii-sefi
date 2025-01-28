@@ -138,6 +138,27 @@ namespace proiectDAW.Controllers
         }
 
         [Authorize(Roles = "Admin,User,Artist")]
+        public IActionResult ViewFriendRequests()
+        {
+            var userId = _userManager.GetUserId(User);
+            var friendRequests = from request in db.FriendRequests
+                                 join user in db.Users on request.SenderId equals user.Id
+                                 where request.ReceiverId == userId
+                                 select new
+                                 {
+                                     User = user,
+                                     RequestId = request.Id,
+                                 };
+            ViewBag.FriendRequests = friendRequests;
+            if (TempData.ContainsKey("message"))
+            {
+                ViewBag.Msg = TempData["message"];
+                ViewBag.MsgType = TempData["messageType"];
+            }
+            return View();
+        }
+
+        [Authorize(Roles = "Admin,User,Artist")]
         [AcceptVerbs("Post")]
         public IActionResult SendFriendRequest(string userId) {
             var currentUserId = _userManager.GetUserId(User);
@@ -157,14 +178,15 @@ namespace proiectDAW.Controllers
 
         [Authorize(Roles = "Admin,User,Artist")]
         [AcceptVerbs("Post")]
-        public IActionResult AcceptFriendRequest(string userId, int requestId) {
+        public IActionResult AcceptFriendRequest(int requestId, bool? fromFriendRequests) {
             var request = db.FriendRequests.Find(requestId);
+            var redirect = (fromFriendRequests ?? false) ? "ViewFriendRequests" : "ViewUsers";
 
             if (request.ReceiverId != _userManager.GetUserId(User))
             {
                 TempData["message"] = "Not authorized to accept this friend request!";
                 TempData["messageType"] = "alert alert-danger";
-                return RedirectToAction("ViewUsers");
+                return RedirectToAction(redirect);
             }
 
             db.FriendRequests.Remove(request);
@@ -179,7 +201,7 @@ namespace proiectDAW.Controllers
 
             TempData["message"] = "Friend request accepted!";
             TempData["messageType"] = "alert alert-success";
-            return RedirectToAction("ViewUsers");
+            return RedirectToAction(redirect);
         }
 
         [Authorize(Roles = "Admin,User,Artist")]
@@ -200,6 +222,26 @@ namespace proiectDAW.Controllers
             TempData["message"] = "Friend request canceled!";
             TempData["messageType"] = "alert alert-success";
             return RedirectToAction("ViewUsers");
+        }
+
+        [Authorize(Roles = "Admin,User,Artist")]
+        [AcceptVerbs("Post")]
+        public IActionResult DeclineFriendRequest(int requestId) {
+            var request = db.FriendRequests.Find(requestId);
+
+            if (request.ReceiverId != _userManager.GetUserId(User))
+            {
+                TempData["message"] = "Not authorized to decline this friend request!";
+                TempData["messageType"] = "alert alert-danger";
+                return RedirectToAction("ViewFriendRequests");
+            }
+
+            db.FriendRequests.Remove(request);
+            db.SaveChanges();
+
+            TempData["message"] = "Friend request declined!";
+            TempData["messageType"] = "alert alert-success";
+            return RedirectToAction("ViewFriendRequests");
         }
 
         [Authorize(Roles = "Admin,User,Artist")]
