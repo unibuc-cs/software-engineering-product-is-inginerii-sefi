@@ -193,7 +193,7 @@ namespace FreeMusicInstantly.Controllers
             if (SongFile != null)
             {
                 var fileName = Path.GetFileName(SongFile.FileName);
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), ".wwwroot\\files", fileName);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\files", fileName);
                 using (var fileSteam = new FileStream(filePath, FileMode.Create))
                 {
                     await SongFile.CopyToAsync(fileSteam);
