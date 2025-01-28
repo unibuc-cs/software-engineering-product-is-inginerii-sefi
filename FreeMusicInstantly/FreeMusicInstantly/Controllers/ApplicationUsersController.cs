@@ -425,11 +425,12 @@ namespace proiectDAW.Controllers
         [HttpPost]
         public IActionResult Delete(string id)
         {
-            var friendRequests = db.FriendRequests.Where(fr => fr.SenderId == id || fr.ReceiverId == id);
-            db.FriendRequests.RemoveRange(friendRequests);
-
-            var friendships = db.Friendships.Where(f => f.User1Id == id || f.User2Id == id);
-            db.Friendships.RemoveRange(friendships);
+            // Associated SongAlbum and SongPlaylist entries are deleted by cascade
+            db.Songs.RemoveRange(db.Songs.Where(s => s.UserId == id));
+            db.Albums.RemoveRange(db.Albums.Where(a => a.UserId == id));
+            db.Playlists.RemoveRange(db.Playlists.Where(p => p.UserId == id));
+            db.FriendRequests.RemoveRange(db.FriendRequests.Where(fr => fr.SenderId == id || fr.ReceiverId == id));
+            db.Friendships.RemoveRange(db.Friendships.Where(f => f.User1Id == id || f.User2Id == id));
 
             var user = db.Users
                          .Where(u => u.Id == id)
