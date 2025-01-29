@@ -130,8 +130,30 @@ namespace FreeMusicInstantly.Controllers
                               .Include("Comments")
                               .Include("Comments.User")
                                .Where(a => a.Id == id).First();
-
-           
+            ViewBag.SongGroups = null;
+            if (User.IsInRole("User"))
+            {
+                var playlists = db.Playlists.Include("User")
+                                            .Where(p => p.UserId == _userManager.GetUserId(User))
+                                            .ToList();
+                ViewBag.SongGroups = playlists;
+            }
+            if (User.IsInRole("Artist"))
+            {
+                var albums = db.Albums.Include("User")
+                                      .Where(a => a.UserId == _userManager.GetUserId(User))
+                                      .ToList();
+                ViewBag.SongGroups = albums;
+            }
+            if (User.IsInRole("Admin"))
+            {
+                var playlists = db.Playlists.Include("User")
+                                                .ToList();
+                var albums = db.Albums.Include("User")
+                                        .ToList();
+                ViewBag.SongGroupsPlaylists = playlists;
+                ViewBag.SongGroupsAlbums = albums;
+            }
             SetAccessRights();
             if (TempData.ContainsKey("message"))
             {
@@ -333,7 +355,61 @@ namespace FreeMusicInstantly.Controllers
             }
         }
 
-        
+        [Authorize(Roles = "Admin,User")]
+        [HttpPost]
+        public IActionResult AddToPlaylist([FromForm] SongPlaylist songPlaylist)
+        {
+            if (ModelState.IsValid)
+            {
+                if (db.SongPlaylists.Any(sp => sp.SongId == songPlaylist.SongId && sp.PlaylistId == songPlaylist.PlaylistId))
+                {
+                    TempData["message"] = "Song already added to playlist!";
+                    TempData["messageType"] = "alert-danger";
+                }
+                else
+                {
+                    db.SongPlaylists.Add(songPlaylist);
+                    db.SaveChanges();
+                    TempData["message"] = "Song added to playlist!";
+                    TempData["messageType"] = "alert-success";
+                }
+            }
+            else
+            {
+                TempData["message"] = "Could not add song to playlist!";
+                TempData["messageType"] = "alert-danger";
+            }
+            return Redirect("/Songs/Show/" + songPlaylist.SongId);
+        }
+
+        [Authorize(Roles = "Admin,Artist")]
+        [HttpPost]
+        public IActionResult AddToAlbum([FromForm] SongAlbum songAlbum)
+        {
+            if (ModelState.IsValid)
+            {
+                if (db.SongAlbums.Any(sa => sa.SongId == songAlbum.SongId && sa.AlbumId == songAlbum.AlbumId))
+                {
+                    TempData["message"] = "Song already added to album!";
+                    TempData["messageType"] = "alert-danger";
+                }
+                else
+                {
+                    db.SongAlbums.Add(songAlbum);
+                    db.SaveChanges();
+                    TempData["message"] = "Song added to album!";
+                    TempData["messageType"] = "alert-success";
+                }
+            }
+            else
+            {
+                TempData["message"] = "Could not add song to album!";
+                TempData["messageType"] = "alert-danger";
+            }
+            return Redirect("/Songs/Show/" + songAlbum.SongId);
+        }
+
+
         private void SetAccessRights()
         {
 
