@@ -264,37 +264,70 @@ namespace FreeMusicInstantly.Controllers
             }
         }
 
+        //[Authorize(Roles = "Admin,Artist,User")]
+        //[HttpPost]
+        //public IActionResult RemoveSong(int playlistId, int songId)
+        //{
+        //    Playlist p = db.Playlists.Include("SongPlaylists")
+        //                              .Where(a => a.Id == playlistId).First();
+
+        //    if (_userManager.GetUserId(User) == p.UserId)
+        //    {
+
+        //        foreach (var sp in p.SongPlaylists)
+        //        {
+        //            if (sp.SongId == songId)
+        //            {
+        //                db.SongPlaylists.Remove(sp);
+        //            }
+
+        //        }
+
+
+        //        db.SaveChanges();
+        //        TempData["message"] = "The song was deleted from the playlist";
+        //        TempData["messageType"] = " alert alert-success";
+        //        return Redirect("/Playlists/Show/" + p.Id);
+        //    }
+        //    else
+        //    {
+        //        TempData["message"] = "You don't have the right to remove the song from this playlist";
+        //        return Redirect("/Playlists/Show/" + p.Id);
+        //    }
+
+        //}
+
         [Authorize(Roles = "Admin,Artist,User")]
         [HttpPost]
-        public IActionResult RemoveSong(int playlistId, int songId)
+        public IActionResult RemoveSong([FromForm] SongPlaylist songPlaylist)
         {
-            Playlist p = db.Playlists.Include("SongPlaylists")
-                                      .Where(a => a.Id == playlistId).First();
-
-            if (_userManager.GetUserId(User) == p.UserId)
+            Playlist playlist = db.Playlists.Include("SongPlaylists")
+                              .Where(a => a.Id == songPlaylist.PlaylistId).First();
+            if (_userManager.GetUserId(User) == playlist.UserId)
             {
-
-                foreach (var sp in p.SongPlaylists)
+                var songPlaylistToRemove = db.SongPlaylists
+                    .Where(sp => sp.PlaylistId == songPlaylist.PlaylistId && sp.SongId == songPlaylist.SongId)
+                    .FirstOrDefault();
+                if (songPlaylistToRemove != null)
                 {
-                    if (sp.SongId == songId)
-                    {
-                        db.SongPlaylists.Remove(sp);
-                    }
-
+                    db.SongPlaylists.Remove(songPlaylistToRemove);
+                    db.SaveChanges();
+                    TempData["message"] = "The song was deleted from the playlist";
+                    TempData["messageType"] = " alert alert-success";
+                    return Redirect("/Playlists/Show/" + playlist.Id);
                 }
-
-
-                db.SaveChanges();
-                TempData["message"] = "The song was deleted from the playlist";
-                TempData["messageType"] = " alert alert-success";
-                return Redirect("/Playlists/Show/" + p.Id);
+                else
+                {
+                    TempData["message"] = "The song was not found in the playlist";
+                    TempData["messageType"] = " alert alert-danger";
+                    return Redirect("/Playlists/Show/" + playlist.Id);
+                }
             }
             else
             {
                 TempData["message"] = "You don't have the right to remove the song from this playlist";
-                return Redirect("/Playlists/Show/" + p.Id);
+                return Redirect("/Playlists/Show/" + playlist.Id);
             }
-
         }
 
 
