@@ -4,6 +4,14 @@
       "restored": true,
       "restoreTime": "2024-12-15T19:51:06.7571152Z"
     },
+    "mssql3": {
+      "restored": true,
+      "restoreTime": "2025-01-29T14:32:46.7098051Z"
+    },
+    "mssql4": {
+      "restored": true,
+      "restoreTime": "2025-01-29T15:21:26.7618059Z"
+    },
     "mssql1": {
       "restored": true,
       "restoreTime": "2024-12-15T19:46:31.3562439Z"
