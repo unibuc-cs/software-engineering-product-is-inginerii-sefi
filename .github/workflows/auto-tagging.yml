@@ -12,27 +12,19 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Get Latest Tag
+      - name: Get Latest Tag, create new tag and push it to remote main
         id: get-latest-tag
         run: |
           latest_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
-          echo "LATEST_TAG=$latest_tag" >> $GITHUB_ENV
-
-      - name: Generate Next Tag
-        id: increment-tag
-        run: |
-          latest_tag=${{ env.LATEST_TAG }}
+          echo "LATEST_TAG=$latest_tag"
           IFS='.' read -r -a tag_parts <<< "${latest_tag/v/}"
           major=${tag_parts[0]}
           minor=${tag_parts[1]}
           patch=${tag_parts[2]}
           new_major=$((major + 1))
           new_tag="v$new_major.$minor.$patch"
-          echo "NEW_TAG=$new_tag" >> $GITHUB_ENV
-
-      - name: Create New Tag
-        run: |
-          git tag ${{ env.NEW_TAG }}
-          git push origin ${{ env.NEW_TAG }}
+          echo "NEW_TAG=$new_tag"
+          git tag "$new_tag"
+          git push origin "$new_tag"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
