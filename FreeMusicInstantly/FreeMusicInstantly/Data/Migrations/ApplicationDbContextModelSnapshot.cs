@@ -137,6 +137,64 @@ namespace FreeMusicInstantly.Data.Migrations
                     b.ToTable("Friendships");
                 });
 
+            modelBuilder.Entity("FreeMusicInstantly.Models.Like", b =>
+                {
+                    b.Property<int>("LikeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LikeId"));
+
+                    b.Property<DateTime>("LikeDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("SongId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId1")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("LikeId");
+
+                    b.HasIndex("SongId");
+
+                    b.HasIndex("UserId1");
+
+                    b.ToTable("Like");
+                });
+
+            modelBuilder.Entity("FreeMusicInstantly.Models.Play", b =>
+                {
+                    b.Property<int>("PlayId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PlayId"));
+
+                    b.Property<DateTime>("PlayTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("SongId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId1")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("PlayId");
+
+                    b.HasIndex("SongId");
+
+                    b.HasIndex("UserId1");
+
+                    b.ToTable("Play");
+                });
+
             modelBuilder.Entity("FreeMusicInstantly.Models.Playlist", b =>
                 {
                     b.Property<int>("Id")
@@ -527,6 +585,40 @@ namespace FreeMusicInstantly.Data.Migrations
                     b.Navigation("User2");
                 });
 
+            modelBuilder.Entity("FreeMusicInstantly.Models.Like", b =>
+                {
+                    b.HasOne("FreeMusicInstantly.Models.Song", "Song")
+                        .WithMany("Likes")
+                        .HasForeignKey("SongId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FreeMusicInstantly.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId1");
+
+                    b.Navigation("Song");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FreeMusicInstantly.Models.Play", b =>
+                {
+                    b.HasOne("FreeMusicInstantly.Models.Song", "Song")
+                        .WithMany("Plays")
+                        .HasForeignKey("SongId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FreeMusicInstantly.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId1");
+
+                    b.Navigation("Song");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("FreeMusicInstantly.Models.Playlist", b =>
                 {
                     b.HasOne("FreeMusicInstantly.Models.ApplicationUser", "User")
@@ -647,6 +739,10 @@ namespace FreeMusicInstantly.Data.Migrations
             modelBuilder.Entity("FreeMusicInstantly.Models.Song", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Likes");
+
+                    b.Navigation("Plays");
 
                     b.Navigation("SongAlbums");
 

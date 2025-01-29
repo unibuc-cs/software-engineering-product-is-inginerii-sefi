@@ -7,6 +7,16 @@
     "mssql2": {
       "type": "mssql",
       "connectionId": "ConnectionStrings:Spotify"
+    },
+    "mssql3": {
+      "type": "mssql",
+      "connectionId": "ConnectionStrings:StatisticiArtistiDB",
+      "dynamicId": null
+    },
+    "mssql4": {
+      "type": "mssql",
+      "connectionId": "ConnectionStrings:StatisticiArtistiDB2",
+      "dynamicId": null
     }
   }
 }

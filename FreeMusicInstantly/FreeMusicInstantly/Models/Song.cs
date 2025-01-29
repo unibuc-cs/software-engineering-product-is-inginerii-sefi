@@ -30,5 +30,8 @@ namespace FreeMusicInstantly.Models
         public virtual ICollection<SongAlbum>? SongAlbums { get; set; }
         public virtual ICollection<SongPlaylist>? SongPlaylists { get; set; }
 
+        public virtual ICollection<Play>? Plays { get; set; }
+        public virtual ICollection<Like>? Likes { get; set; }
+
     }
 }
