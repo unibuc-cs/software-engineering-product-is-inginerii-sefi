@@ -25,6 +25,10 @@ namespace FreeMusicInstantly.Data
 
         public DbSet<Comment> Comments { get; set; }
 
+        public DbSet<Like> Likes { get; set; }
+
+        public DbSet<Play> Plays { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

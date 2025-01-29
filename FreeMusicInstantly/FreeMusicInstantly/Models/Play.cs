@@ -10,7 +10,7 @@ namespace FreeMusicInstantly.Models
     {
         [Key]
         public int PlayId { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public int SongId { get; set; }
         public DateTime PlayTime { get; set; }
 

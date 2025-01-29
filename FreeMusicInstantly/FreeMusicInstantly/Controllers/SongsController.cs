@@ -125,11 +125,18 @@ namespace FreeMusicInstantly.Controllers
         [Authorize(Roles = "User,Admin,Artist")]
         public IActionResult Show(int id)
         {
-            
-            Song cat = db.Songs.Include("User")
-                              .Include("Comments")
-                              .Include("Comments.User")
-                               .Where(a => a.Id == id).First();
+            var song = db.Songs
+                         .Include(s => s.User)
+                         .Include(s => s.Comments)
+                         .ThenInclude(c => c.User)
+                         .Include(s => s.Likes) // ✅ Include Likes
+                         .FirstOrDefault(s => s.Id == id);
+
+            if (song == null)
+            {
+                return NotFound();
+            }
+
             ViewBag.SongGroups = null;
             if (User.IsInRole("User"))
             {
@@ -147,23 +154,26 @@ namespace FreeMusicInstantly.Controllers
             }
             if (User.IsInRole("Admin"))
             {
-                var playlists = db.Playlists.Include("User")
-                                                .ToList();
-                var albums = db.Albums.Include("User")
-                                        .ToList();
+                var playlists = db.Playlists.Include("User").ToList();
+                var albums = db.Albums.Include("User").ToList();
                 ViewBag.SongGroupsPlaylists = playlists;
                 ViewBag.SongGroupsAlbums = albums;
             }
+
+            // ✅ Pass the Like count to the view
+            ViewBag.LikesCount = song.Likes?.Count() ?? 0;
+
             SetAccessRights();
+
             if (TempData.ContainsKey("message"))
             {
                 ViewBag.Msg = TempData["message"];
                 ViewBag.MsgType = TempData["messageType"];
             }
-            return View(cat);
 
-
+            return View(song);
         }
+
         [HttpPost]
         [Authorize(Roles = "User,Admin,Artist")]
         public IActionResult Show([FromForm] Comment comment)

@@ -11,7 +11,7 @@ namespace FreeMusicInstantly.Models
     {
         [Key]
         public int LikeId { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public int SongId { get; set; }
         public DateTime LikeDate { get; set; }
 
