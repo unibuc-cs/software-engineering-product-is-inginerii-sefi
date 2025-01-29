@@ -262,38 +262,72 @@ namespace FreeMusicInstantly.Controllers
             }
         }
 
+        //[Authorize(Roles = "Admin,Artist")]
+        //[HttpPost]
+        //public IActionResult RemoveSong(int AlbumId, int SongId)
+        //{
+        //    Album cat = db.Albums.Include("SongAlbums")
+        //                              .Where(a => a.Id == AlbumId).First();
+
+        //    if (_userManager.GetUserId(User) == cat.UserId)
+        //    {
+
+        //        foreach (var bmkcat in cat.SongAlbums)
+        //        {
+        //            if (bmkcat.SongId == SongId)
+        //            {
+        //                db.SongAlbums.Remove(bmkcat);
+        //            }
+
+        //        }
+
+
+        //        db.SaveChanges();
+        //        TempData["message"] = "The song was deleted from the album";
+        //        TempData["messageType"] = " alert alert-success";
+        //        return Redirect("/Albums/Show/" + cat.Id);
+        //    }
+        //    else
+        //    {
+        //        TempData["message"] = "You don't have the right to remove the song from this album";
+        //        return Redirect("/Albums/Show/" + cat.Id);
+        //    }
+
+        //}
+
         [Authorize(Roles = "Admin,Artist")]
         [HttpPost]
-        public IActionResult RemoveSong(int AlbumId, int SongId)
+        public IActionResult RemoveSong([FromForm] SongAlbum songAlbum)
         {
-            Album cat = db.Albums.Include("SongAlbums")
-                                      .Where(a => a.Id == AlbumId).First();
-
-            if (_userManager.GetUserId(User) == cat.UserId)
+            Album album = db.Albums.Include("SongAlbums")
+                                      .Where(a => a.Id == songAlbum.AlbumId).First();
+            if (_userManager.GetUserId(User) == album.UserId)
             {
-
-                foreach (var bmkcat in cat.SongAlbums)
+                var songAlbumToRemove = db.SongAlbums
+                                        .Where(sa => sa.AlbumId == songAlbum.AlbumId && sa.SongId == songAlbum.SongId)
+                                        .FirstOrDefault();
+                if (songAlbumToRemove != null)
                 {
-                    if (bmkcat.SongId == SongId)
-                    {
-                        db.SongAlbums.Remove(bmkcat);
-                    }
-
+                    db.SongAlbums.Remove(songAlbumToRemove);
+                    db.SaveChanges();
+                    TempData["message"] = "The song was deleted from the album";
+                    TempData["messageType"] = " alert alert-success";
+                    return Redirect("/Albums/Show/" + album.Id);
                 }
-
-
-                db.SaveChanges();
-                TempData["message"] = "The song was deleted from the album";
-                TempData["messageType"] = " alert alert-success";
-                return Redirect("/Albums/Show/" + cat.Id);
+                else
+                {
+                    TempData["message"] = "The song was not found in the album";
+                    TempData["messageType"] = " alert alert-danger";
+                    return Redirect("/Albums/Show/" + album.Id);
+                }
             }
             else
             {
                 TempData["message"] = "You don't have the right to remove the song from this album";
-                return Redirect("/Albums/Show/" + cat.Id);
+                return Redirect("/Albums/Show/" + album.Id);
             }
-
         }
+
         private void SetAccessRights()
         {
 
