@@ -164,6 +164,13 @@
 							</div>
 						</div>
                     </form>
+
+                    <div id="like-section" style="text-align: center; margin: 20px 0;">
+                        <button id="like-button" class="btn btn-primary" onclick="toggleLike(@Model.Id)">
+                            ❤️ <span id="like-text">@((ViewBag.LikesCount > 0) ? "Unlike" : "Like")</span>
+                            (<span id="like-count">@ViewBag.LikesCount</span>)
+                        </button>
+                    </div>
                 }
 
                 @if (ViewBag.EsteAdmin || ViewBag.UserCurent == Model.UserId)
@@ -309,3 +316,26 @@
     </div>
 
 </div>
+
+<script>
+    function toggleLike(songId) {
+        fetch('/Likes/ToggleLike?songId=' + songId, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'RequestVerificationToken': document.querySelector("input[name='__RequestVerificationToken']").value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById("like-count").textContent = data.likeCount;
+                document.getElementById("like-text").textContent = data.liked ? "Unlike" : "Like";
+            } else {
+                alert("Error: Could not like the song.");
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    }
+</script>
