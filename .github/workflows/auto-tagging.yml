@@ -26,8 +26,8 @@ jobs:
           major=${tag_parts[0]}
           minor=${tag_parts[1]}
           patch=${tag_parts[2]}
-          new_patch=$((patch + 1))
-          new_tag="v$major.$minor.$new_patch"
+          new_major=$((major + 1))
+          new_tag="v$new_major.$minor.$patch"
           echo "NEW_TAG=$new_tag" >> $GITHUB_ENV
 
       - name: Create New Tag
