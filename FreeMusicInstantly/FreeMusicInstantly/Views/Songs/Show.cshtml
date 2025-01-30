@@ -17,7 +17,7 @@
 
 
 <div id="custom-audio-player" style="text-align: center; margin: 30px 0;">
-    <audio id="audio" src="~/files/@Model.SongFile"></audio>
+    <audio id="audio" data-song-id="@Model.Id" src="~/files/@Model.SongFile"></audio>
     <button id="play-pause" style="
         width: 60px;
         height: 60px;
@@ -42,43 +42,141 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-    const audio = document.getElementById('audio');
-    const playPauseButton = document.getElementById('play-pause');
-    const seekBar = document.getElementById('seek-bar');
-    const currentTimeDisplay = document.getElementById('current-time');
-    const totalTimeDisplay = document.getElementById('total-time');
+        document.addEventListener('DOMContentLoaded', function () {
+        console.log("🔍 Script loaded!");
 
-    function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
-    }
+        const audio = document.getElementById('audio');
+        const playPauseButton = document.getElementById('play-pause');
+        const seekBar = document.getElementById('seek-bar');
+        const currentTimeDisplay = document.getElementById('current-time');
+        const totalTimeDisplay = document.getElementById('total-time');
+        const playCountDisplay = document.getElementById('play-count');
+        const likeButton = document.getElementById('like-button');
+        const likeText = document.getElementById('like-text');
+        const likeCountDisplay = document.getElementById('like-count');
 
-    playPauseButton.addEventListener('click', function () {
-    if (audio.paused) {
-    audio.play();
-    playPauseButton.textContent = '⏸';
-    } else {
-    audio.pause();
-    playPauseButton.textContent = '▶';
-    }
+        const songId = audio?.getAttribute('data-song-id');
+        let playTracked = false;
+        let playRequestSent = false;
+
+        if (!audio) {
+            console.error("❌ Audio element not found!");
+            return;
+        }
+
+        console.log("🎵 Audio element found:", audio);
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        // ✅ Ensure metadata is loaded before setting duration
+        audio.addEventListener('loadedmetadata', function () {
+            if (audio.duration) {
+                totalTimeDisplay.textContent = formatTime(audio.duration);
+                seekBar.max = audio.duration;
+            }
+        });
+
+        // ✅ Update seek bar in real-time
+        audio.addEventListener('timeupdate', function () {
+            if (audio.duration) {
+                seekBar.value = audio.currentTime;
+                currentTimeDisplay.textContent = formatTime(audio.currentTime);
+            }
+        });
+
+        // ✅ Allow seeking
+        seekBar.addEventListener('input', function () {
+            if (audio.duration) {
+                audio.currentTime = seekBar.value;
+            }
+        });
+
+        // ✅ Play/Pause Button Handling
+        playPauseButton.addEventListener('click', function () {
+            if (audio.paused) {
+                audio.play().then(() => {
+                    console.log("🎵 Song is playing!");
+                    playPauseButton.textContent = '⏸';
+                }).catch(error => {
+                    console.error("🔴 Playback error:", error);
+                    alert("Autoplay blocked. Click again to play.");
+                });
+            } else {
+                audio.pause();
+                playPauseButton.textContent = '▶';
+            }
+        });
+
+        // ✅ Track Plays (Fixes Duplicate Requests)
+        audio.addEventListener('play', function () {
+            if (!songId) {
+                console.error("❌ songId is missing!");
+                return;
+            }
+
+            // Only allow one play tracking request per session
+            if (!playTracked && !playRequestSent) {
+                playRequestSent = true; // Prevent duplicate requests
+
+                fetch('/Plays/TrackPlay?songId=' + songId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        playCountDisplay.textContent = data.totalPlays;
+                        console.log("✅ Play count updated:", data.totalPlays);
+                        playTracked = true; // Mark as tracked after a successful request
+                    } else {
+                        console.error("❌ Error tracking play:", data.message);
+                    }
+                })
+                .catch(error => console.error("Error tracking play:", error))
+                .finally(() => playRequestSent = false); // Allow tracking again in next session
+            }
+        });
+
+        // ✅ Like Button Handling
+        likeButton.addEventListener('click', function () {
+            if (!songId) {
+                console.error("❌ songId is missing!");
+                return;
+            }
+
+            fetch('/Likes/ToggleLike?songId=' + songId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    likeCountDisplay.textContent = data.totalLikes;
+                    likeText.textContent = data.liked ? "Unlike" : "Like";
+                    console.log("✅ Like count updated:", data.totalLikes);
+                } else {
+                    console.error("❌ Error toggling like:", data.message);
+                }
+            })
+            .catch(error => console.error("Error toggling like:", error));
+        });
+
+        console.log("✅ Audio player initialized!");
     });
 
-    audio.addEventListener('loadedmetadata', function () {
-    totalTimeDisplay.textContent = formatTime(audio.duration);
-    });
 
-    audio.addEventListener('timeupdate', function () {
-    seekBar.value = (audio.currentTime / audio.duration) * 100;
-    currentTimeDisplay.textContent = formatTime(audio.currentTime);
-    });
-
-    seekBar.addEventListener('input', function () {
-    audio.currentTime = (seekBar.value / 100) * audio.duration;
-    });
-    });
 </script>
+
 
 @* @if (ViewBag.EsteAdmin || ViewBag.UserCurent == Model.UserId) *@
 @* { *@
@@ -144,6 +242,11 @@
                         </div>
 
                     </form>
+
+                        <div style="text-align: center; margin: 20px 0;">
+                            🎵 Total Plays: <strong><span id="play-count">@ViewBag.TotalPlays</span></strong>
+                        </div>
+
                 }
                 @if (User.IsInRole("User"))
                 {
@@ -171,6 +274,11 @@
                             (<span id="like-count">@ViewBag.LikesCount</span>)
                         </button>
                     </div>
+
+                        <div style="text-align: center; margin: 20px 0;">
+                            🎵 Total Plays: <strong><span id="play-count">@ViewBag.TotalPlays</span></strong>
+                        </div>
+
                 }
 
                 @if (ViewBag.EsteAdmin || ViewBag.UserCurent == Model.UserId)
@@ -234,6 +342,11 @@
                         </div>
                     </form>
                     </div>
+
+                    <div style="text-align: center; margin: 20px 0;">
+                        🎵 Total Plays: <strong><span id="play-count">@ViewBag.TotalPlays</span></strong>
+                    </div>
+
                 }
 
                 <form method="post" action="/Songs/Show/@Model.Id">
@@ -339,3 +452,4 @@
         .catch(error => console.error("Error:", error));
     }
 </script>
+

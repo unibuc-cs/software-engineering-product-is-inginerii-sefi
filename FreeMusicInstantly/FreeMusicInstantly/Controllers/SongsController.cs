@@ -129,7 +129,8 @@ namespace FreeMusicInstantly.Controllers
                          .Include(s => s.User)
                          .Include(s => s.Comments)
                          .ThenInclude(c => c.User)
-                         .Include(s => s.Likes) // ✅ Include Likes
+                         .Include(s => s.Plays)
+                         .Include(s => s.Likes)
                          .FirstOrDefault(s => s.Id == id);
 
             if (song == null)
@@ -138,30 +139,28 @@ namespace FreeMusicInstantly.Controllers
             }
 
             ViewBag.SongGroups = null;
+            ViewBag.TotalPlays = song.Plays?.Count() ?? 0;
+            ViewBag.LikesCount = song.Likes?.Count() ?? 0;
+
+            var userId = _userManager.GetUserId(User);
+
             if (User.IsInRole("User"))
             {
-                var playlists = db.Playlists.Include("User")
-                                            .Where(p => p.UserId == _userManager.GetUserId(User))
-                                            .ToList();
-                ViewBag.SongGroups = playlists;
+                ViewBag.SongGroups = db.Playlists.Include(p => p.User)
+                                                 .Where(p => p.UserId == userId)
+                                                 .ToList();
             }
-            if (User.IsInRole("Artist"))
+            else if (User.IsInRole("Artist"))
             {
-                var albums = db.Albums.Include("User")
-                                      .Where(a => a.UserId == _userManager.GetUserId(User))
-                                      .ToList();
-                ViewBag.SongGroups = albums;
+                ViewBag.SongGroups = db.Albums.Include(a => a.User)
+                                              .Where(a => a.UserId == userId)
+                                              .ToList();
             }
-            if (User.IsInRole("Admin"))
+            else if (User.IsInRole("Admin"))
             {
-                var playlists = db.Playlists.Include("User").ToList();
-                var albums = db.Albums.Include("User").ToList();
-                ViewBag.SongGroupsPlaylists = playlists;
-                ViewBag.SongGroupsAlbums = albums;
+                ViewBag.SongGroupsPlaylists = db.Playlists.Include(p => p.User).ToList();
+                ViewBag.SongGroupsAlbums = db.Albums.Include(a => a.User).ToList();
             }
-
-            // ✅ Pass the Like count to the view
-            ViewBag.LikesCount = song.Likes?.Count() ?? 0;
 
             SetAccessRights();
 
@@ -173,6 +172,7 @@ namespace FreeMusicInstantly.Controllers
 
             return View(song);
         }
+
 
         [HttpPost]
         [Authorize(Roles = "User,Admin,Artist")]
