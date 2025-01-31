@@ -25,7 +25,7 @@ namespace FreeMusicInstantly.Controllers
         public IActionResult Index()
         {
             SetAccessRights();
-            var cat = db.Albums.Include("User");
+            var cat = db.Albums.Include("User").Where(x => x.UserId == _userManager.GetUserId(User)).Include("User");
             var search = "";
             foreach (Album c in cat)
             {

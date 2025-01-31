@@ -396,8 +396,21 @@ namespace FreeMusicInstantly.Controllers
         [HttpPost]
         public IActionResult AddToAlbum([FromForm] SongAlbum songAlbum)
         {
+            SetAccessRights(); 
+
             if (ModelState.IsValid)
             {
+                string userId = ViewBag.UserCurent as string;
+
+                bool isUserSongOwner = db.Songs.Any(s => s.Id == songAlbum.SongId && s.UserId == userId);
+
+                if (!isUserSongOwner)
+                {
+                    TempData["message"] = "You can only add your own songs to an album!";
+                    TempData["messageType"] = "alert-danger";
+                    return Redirect("/Songs/Show/" + songAlbum.SongId);
+                }
+
                 if (db.SongAlbums.Any(sa => sa.SongId == songAlbum.SongId && sa.AlbumId == songAlbum.AlbumId))
                 {
                     TempData["message"] = "Song already added to album!";
@@ -419,6 +432,7 @@ namespace FreeMusicInstantly.Controllers
             return Redirect("/Songs/Show/" + songAlbum.SongId);
         }
 
+       
 
         private void SetAccessRights()
         {
