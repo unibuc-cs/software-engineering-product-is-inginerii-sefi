@@ -7,6 +7,17 @@
 
 <br />
 
+<h1 style="text-align: center;">
+    @if (ViewBag.IsOwner)
+    {
+        <text>Your Playlists</text>
+    }
+    else
+    {
+        <text>Playlists</text>
+    }
+</h1>
+
 @if (ViewBag.IsOwner)
 {
     <a class="buton_universal" href="/Playlists/New">
