@@ -212,7 +212,7 @@
                             </button>
                         </form>
                 }
-                @if (User.IsInRole("Artist"))
+                    @if (User.IsInRole("Artist") && Model.UserId == ViewBag.UserCurent)
                 {
                     <form method="post" asp-controller="Songs" asp-action="AddToAlbum">
                         <input type="hidden" name="SongId" value="@Model.Id" />
