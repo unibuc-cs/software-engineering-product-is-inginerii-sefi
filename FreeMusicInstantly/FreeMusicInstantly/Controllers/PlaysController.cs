@@ -29,8 +29,6 @@ namespace FreeMusicInstantly.Controllers
         }
 
 
-
-
         [HttpPost]
         public async Task<IActionResult> TrackPlay(int songId)
         {
@@ -45,7 +43,7 @@ namespace FreeMusicInstantly.Controllers
             string userId = _userManager.GetUserId(User);
             DateTime now = DateTime.UtcNow;
 
-            // **Prevent Duplicate Plays in Short Time (e.g., 30 seconds)**
+        
             var recentPlay = await db.Plays
                                      .Where(p => p.SongId == songId && p.UserId == userId)
                                      .OrderByDescending(p => p.PlayTime)
@@ -53,10 +51,9 @@ namespace FreeMusicInstantly.Controllers
 
             if (recentPlay != null && (now - recentPlay.PlayTime).TotalSeconds < 10)
             {
-                return Json(new { success = false, message = "Play already counted recently", totalPlays = song.Plays.Count });
+                return Json(new { success = false, message = "Play already counted too recently", totalPlays = song.Plays.Count });
             }
 
-            // **Add a new play record**
             var newPlay = new Play
             {
                 SongId = songId,
@@ -67,7 +64,6 @@ namespace FreeMusicInstantly.Controllers
             db.Plays.Add(newPlay);
             await db.SaveChangesAsync();
 
-            // **Get updated play count**
             int totalPlays = await db.Plays.CountAsync(p => p.SongId == songId);
 
             return Json(new { success = true, totalPlays = totalPlays });
