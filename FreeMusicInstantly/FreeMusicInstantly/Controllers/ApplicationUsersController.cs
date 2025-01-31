@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 
 
@@ -464,11 +465,98 @@ namespace proiectDAW.Controllers
             }
             return selectList;
         }
-         /* to be implemented
-         -delete method to be completed
-         -show songs and albums for artist
-         -show playlists for users
-         */
+        /* to be implemented
+        -delete method to be completed
+        -show songs and albums for artist
+        -show playlists for users
+        */
+
+
+        [Authorize(Roles = "Artist, Admin")]
+        public async Task<IActionResult> ArtistSongStatistics()
+        {
+            var currentUserId = _userManager.GetUserId(User);
+            var currentDate = DateTime.UtcNow;
+
+            // Get artist's songs
+            var artistSongs = await db.Songs
+                .Where(s => s.UserId == currentUserId)
+                .ToListAsync();
+
+            if (!artistSongs.Any())
+            {
+                TempData["message"] = "You have no songs.";
+                TempData["messageType"] = "alert alert-warning";
+                return View(new List<object>());
+            }
+
+            var songIds = artistSongs.Select(s => s.Id).ToList();
+
+            // Get the total number of plays & likes in the last year & month
+            var lastYear = currentDate.AddYears(-1);
+            var lastMonth = currentDate.AddMonths(-1);
+
+            var totalPlaysLastYear = await db.Plays
+                .Where(p => songIds.Contains(p.SongId) && p.PlayTime >= lastYear)
+                .CountAsync();
+
+            var totalPlaysLastMonth = await db.Plays
+                .Where(p => songIds.Contains(p.SongId) && p.PlayTime >= lastMonth)
+                .CountAsync();
+
+            var totalLikesLastYear = await db.Likes
+                .Where(l => songIds.Contains(l.SongId) && l.LikeDate >= lastYear)
+                .CountAsync();
+
+            var totalLikesLastMonth = await db.Likes
+                .Where(l => songIds.Contains(l.SongId) && l.LikeDate >= lastMonth)
+                .CountAsync();
+
+            // Fetch individual song statistics
+            var playCounts = await db.Plays
+                .Where(p => songIds.Contains(p.SongId))
+                .GroupBy(p => p.SongId)
+                .Select(g => new { SongId = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.SongId, x => x.Count);
+
+            var likeCounts = await db.Likes
+                .Where(l => songIds.Contains(l.SongId))
+                .GroupBy(l => l.SongId)
+                .Select(g => new { SongId = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.SongId, x => x.Count);
+
+            var playlistCounts = await db.SongPlaylists
+                .Where(sp => sp.SongId.HasValue && songIds.Contains(sp.SongId.Value))
+                .GroupBy(sp => sp.SongId)
+                .Select(g => new { SongId = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.SongId, x => x.Count);
+
+            var songStatistics = artistSongs.Select(song => new
+            {
+                SongTitle = song.Title,
+                PlaylistCount = playlistCounts.TryGetValue(song.Id, out int playlistCount) ? playlistCount : 0,
+                PlayCount = playCounts.TryGetValue(song.Id, out int playCount) ? playCount : 0,
+                LikeCount = likeCounts.TryGetValue(song.Id, out int likeCount) ? likeCount : 0
+            }).ToList();
+
+            // Pass data to ViewBag for visualization
+            ViewBag.TotalPlaysLastYear = totalPlaysLastYear;
+            ViewBag.TotalPlaysLastMonth = totalPlaysLastMonth;
+            ViewBag.TotalLikesLastYear = totalLikesLastYear;
+            ViewBag.TotalLikesLastMonth = totalLikesLastMonth;
+            ViewBag.SongStatistics = songStatistics;
+
+            return View(songStatistics);
+        }
+
+
+
+
+
+
+
+
+
 
     }
 }
