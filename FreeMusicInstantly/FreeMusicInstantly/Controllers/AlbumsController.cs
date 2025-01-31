@@ -1,6 +1,7 @@
 ﻿using FreeMusicInstantly.Data;
 using FreeMusicInstantly.Data.Migrations;
 using FreeMusicInstantly.Models;
+using Ganss.Xss;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +35,11 @@ namespace FreeMusicInstantly.Controllers
 
             if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
             {
+                var sanitizer = new HtmlSanitizer();
+
                 search = Convert.ToString(HttpContext.Request.Query["search"]).Trim();
+                search = sanitizer.Sanitize(search);
+
                 List<int> albumIds = db.Albums
                                        .Where(album => album.AlbumName.Contains(search))
                                        .Select(album => album.Id)

@@ -1,5 +1,6 @@
 ﻿using FreeMusicInstantly.Data;
 using FreeMusicInstantly.Models;
+using Ganss.Xss;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,7 @@ namespace FreeMusicInstantly.Controllers
         [Authorize(Roles = "User,Admin,Artist")]
         public IActionResult Index()
         {
+            var sanitizer = new HtmlSanitizer();
             var search = "";
 
             var songs = db.Songs.Include("User");
@@ -30,6 +32,7 @@ namespace FreeMusicInstantly.Controllers
             if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
             {
                 search = Convert.ToString(HttpContext.Request.Query["search"]).Trim();
+                search = sanitizer.Sanitize(search);
                 List<int> SongIds = db.Songs
                                        .Where(song => song.Title.Contains(search))
                                        .Select(song => song.Id)
@@ -180,9 +183,9 @@ namespace FreeMusicInstantly.Controllers
         {
             comment.Date = DateTime.Now;
             comment.UserId = _userManager.GetUserId(User);
-
             if (ModelState.IsValid)
             {
+                comment.Text = new HtmlSanitizer().Sanitize(comment.Text);
                 db.Comments.Add(comment);
                 db.SaveChanges();
                 TempData["message"] = "The comment was successfully added";
@@ -222,6 +225,8 @@ namespace FreeMusicInstantly.Controllers
         {
             
             cat.UserId = _userManager.GetUserId(User);
+
+
             if (SongFile != null)
             {
                 var fileName = Path.GetFileName(SongFile.FileName);
@@ -240,6 +245,10 @@ namespace FreeMusicInstantly.Controllers
 
             if (ModelState.IsValid)
             {
+                var sanitizer = new HtmlSanitizer();
+                cat.Title = sanitizer.Sanitize(cat.Title);
+                cat.Description = sanitizer.Sanitize(cat.Description);
+
                 db.Songs.Add(cat);
                 db.SaveChanges();
                 TempData["message"] = "The song was added";
@@ -281,6 +290,7 @@ namespace FreeMusicInstantly.Controllers
         {
             Song cat = db.Songs.Where(a => a.Id == id).FirstOrDefault();
 
+
             if (cat == null)
             {
                 TempData["message"] = "The song does not exist.";
@@ -288,8 +298,13 @@ namespace FreeMusicInstantly.Controllers
                 return RedirectToAction("Index");
             }
 
+
             if (ModelState.IsValid)
             {
+                var sanitizer = new HtmlSanitizer();
+                cat.Title = sanitizer.Sanitize(cat.Title);
+                cat.Description = sanitizer.Sanitize(cat.Description);
+
                 if (cat.UserId == _userManager.GetUserId(User))
                 {
                     
