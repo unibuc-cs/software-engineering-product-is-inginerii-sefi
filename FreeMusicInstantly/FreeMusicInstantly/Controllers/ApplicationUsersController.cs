@@ -439,6 +439,7 @@ namespace proiectDAW.Controllers
             db.Playlists.RemoveRange(db.Playlists.Where(p => p.UserId == id));
             db.FriendRequests.RemoveRange(db.FriendRequests.Where(fr => fr.SenderId == id || fr.ReceiverId == id));
             db.Friendships.RemoveRange(db.Friendships.Where(f => f.User1Id == id || f.User2Id == id));
+            db.Comments.RemoveRange(db.Comments.Where(c => c.UserId == id));
 
             var user = db.Users
                          .Where(u => u.Id == id)
