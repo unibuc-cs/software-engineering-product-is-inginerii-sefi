@@ -45,3 +45,23 @@ var sanitizer = new HtmlSanitizer();
 search = sanitizer.Sanitize(search);
 ```
 
+## 4. Protecția împotriva Atacurilor de Tip Cross-Site Request Forgery (CSRF)  
+
+Cross-Site Request Forgery (CSRF) este un atac care constă în **trimiterea de cereri neautorizate** către un site web în numele unui utilizator autentificat.
+Acest atac este posibil atunci când un utilizator, într-o sesiune de browser în care este deja autentificat pe un site vulnerabil, vizitează un site malitios.
+În acest caz, browserul trimite automat cookie-urile de autentificare ale site-ului vulnerabil, permițând executarea cererilor neautorizate.  
+
+Framework-ul ASP.NET oferă protecție împotriva CSRF prin utilizarea **anti-forgery tokens**.
+
+Când un formular cu atributele `asp-action`/`asp-controller` este generat într-o pagină Razor, un token anti-forgery este inclus automat în formular sub forma unui input de tip `hidden`.
+Pentru cererile POST din JavaScript, token-ul trebuie adăugat manual.
+
+Alt token este stocat în cookie-ul utilizatorului. La trimiterea formularului, serverul verifică dacă cele două token-uri sunt o pereche validă.
+Deoarece fiecare sesiune și utilizator au o pereche unică de token-uri, atacatorii nu pot obține token-ul altui utilizator, care ar fi necesar pentru un atac CSRF.
+
+Protecția CSRF este activată prin global adăugarea unui filtru în fișierul `Program.cs`.
+Toate cererile, cu exceptia celor care nu modifică starea serverului (GET, HEAD, OPTIONS și TRACE), vor fi verificate automat pentru token-ul anti-forgery.
+
+```csharp
+builder.Services.AddMvc(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
+```
