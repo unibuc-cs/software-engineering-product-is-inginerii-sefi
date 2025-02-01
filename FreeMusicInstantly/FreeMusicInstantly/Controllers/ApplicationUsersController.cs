@@ -33,6 +33,13 @@ namespace proiectDAW.Controllers
             _roleManager = roleManager;
         }
 
+        [HttpPost]
+        public IActionResult CSRFProtectionTest()
+        {
+            // this method is used only in testing to check if the CSRF protection is working
+            return base.Content("Request was allowed");
+        }
+
         [Authorize(Roles = "User,Admin,Artist")]
         public async Task<IActionResult> MyProfile()
         {

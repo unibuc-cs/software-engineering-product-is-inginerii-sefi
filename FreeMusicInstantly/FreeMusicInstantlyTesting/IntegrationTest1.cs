@@ -67,13 +67,12 @@ namespace FreeMusicInstantlyTesting
             }
 
             // Step 2: Prepare login form data
-            var loginData = new FormUrlEncodedContent(new[]
-            {
+            var loginData = new FormUrlEncodedContent([
                 new KeyValuePair<string, string>("Input.Email", "user@test.com"),
                 new KeyValuePair<string, string>("Input.Password", "User1!"),
                 new KeyValuePair<string, string>("__RequestVerificationToken", antiForgeryToken),
                 new KeyValuePair<string, string>("Input.RememberMe", "false")
-            });
+            ]);
 
             // Step 3: Send the login request
             var loginResponse = await client.PostAsync("/Identity/Account/Login", loginData);
@@ -125,13 +124,12 @@ namespace FreeMusicInstantlyTesting
             }
 
             // Step 2: Prepare login form data
-            var loginData = new FormUrlEncodedContent(new[]
-            {
+            var loginData = new FormUrlEncodedContent([
                 new KeyValuePair<string, string>("Input.Email", "user@test.com"),
                 new KeyValuePair<string, string>("Input.Password", "User1!"),
                 new KeyValuePair<string, string>("__RequestVerificationToken", antiForgeryToken),
                 new KeyValuePair<string, string>("Input.RememberMe", "false")
-            });
+            ]);
 
             // Step 3: Send the login request
             var loginResponse = await client.PostAsync("/Identity/Account/Login", loginData);
@@ -158,5 +156,39 @@ namespace FreeMusicInstantlyTesting
             }
         }
 
+        [Fact]
+        public async void AntiForgeryTokenTest()
+        {
+            var testEndpoint = "/ApplicationUsers/CSRFProtectionTest";
+
+            var client = _factory.CreateClient(new WebApplicationFactoryClientOptions
+            {
+                AllowAutoRedirect = true,
+                HandleCookies = true
+            });
+
+            var badResponse = await client.PostAsync(testEndpoint, new FormUrlEncodedContent([]));
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, badResponse.StatusCode);
+
+            var badResponse2 = await client.PostAsync(testEndpoint, new FormUrlEncodedContent([
+                new KeyValuePair<string, string>("__RequestVerificationToken", "bad token")
+            ]));
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, badResponse2.StatusCode);
+
+            var homePageResponse = await client.GetAsync("/Identity/Account/Login");
+            homePageResponse.EnsureSuccessStatusCode();
+            var homePageContent = await homePageResponse.Content.ReadAsStringAsync();
+            var parser = new HtmlParser();
+            var document = parser.ParseDocument(homePageContent);
+            var antiForgeryToken = document.QuerySelector("input[name='__RequestVerificationToken']")?.GetAttribute("value");
+            Assert.NotNull(antiForgeryToken);
+
+            var goodResponse = await client.PostAsync(testEndpoint, new FormUrlEncodedContent([
+                new KeyValuePair<string, string>("__RequestVerificationToken", antiForgeryToken)
+            ]));
+            goodResponse.EnsureSuccessStatusCode();
+            var goodResponseContent = await goodResponse.Content.ReadAsStringAsync();
+            Assert.Equal("Request was allowed", goodResponseContent);
+        }
     }
 }
