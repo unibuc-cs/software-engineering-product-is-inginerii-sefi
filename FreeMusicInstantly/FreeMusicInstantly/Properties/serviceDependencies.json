@@ -17,6 +17,11 @@
       "type": "mssql",
       "connectionId": "ConnectionStrings:StatisticiArtistiDB2",
       "dynamicId": null
+    },
+    "mssql5": {
+      "type": "mssql",
+      "connectionId": "ConnectionStrings:SonarQubeIS",
+      "dynamicId": null
     }
   }
 }

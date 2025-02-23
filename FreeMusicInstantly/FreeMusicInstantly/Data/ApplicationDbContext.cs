@@ -29,29 +29,29 @@ namespace FreeMusicInstantly.Data
 
         public DbSet<Play> Plays { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder) // Renamed parameter to 'builder'
         {
-            base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<SongAlbum>()
-            .HasKey(ab => new
-            {
-                ab.Id,
-                ab.SongId,
-                ab.AlbumId
-            });
+            base.OnModelCreating(builder);
 
-            modelBuilder.Entity<SongAlbum>()
-               .HasOne(ab => ab.Song)
-               .WithMany(ab => ab.SongAlbums)
-               .HasForeignKey(ab => ab.SongId);
+            builder.Entity<SongAlbum>()
+                .HasKey(ab => new
+                {
+                    ab.Id,
+                    ab.SongId,
+                    ab.AlbumId
+                });
 
-            modelBuilder.Entity<SongAlbum>()
+            builder.Entity<SongAlbum>()
+                .HasOne(ab => ab.Song)
+                .WithMany(ab => ab.SongAlbums)
+                .HasForeignKey(ab => ab.SongId);
+
+            builder.Entity<SongAlbum>()
                 .HasOne(ab => ab.Album)
                 .WithMany(ab => ab.SongAlbums)
                 .HasForeignKey(ab => ab.AlbumId);
 
-
-            modelBuilder.Entity<SongPlaylist>()
+            builder.Entity<SongPlaylist>()
                 .HasKey(pl => new
                 {
                     pl.Id,
@@ -59,41 +59,40 @@ namespace FreeMusicInstantly.Data
                     pl.PlaylistId
                 });
 
-            modelBuilder.Entity<SongPlaylist>()
+            builder.Entity<SongPlaylist>()
                 .HasOne(pl => pl.Song)
                 .WithMany(pl => pl.SongPlaylists)
                 .HasForeignKey(pl => pl.SongId);
 
-            modelBuilder.Entity<SongPlaylist>()
+            builder.Entity<SongPlaylist>()
                 .HasOne(pl => pl.Playlist)
                 .WithMany(pl => pl.SongPlaylists)
                 .HasForeignKey(pl => pl.PlaylistId);
 
-            modelBuilder.Entity<Friendship>()
+            builder.Entity<Friendship>()
                 .HasOne(f => f.User1)
                 .WithMany()
                 .HasForeignKey(f => f.User1Id);
 
-            modelBuilder.Entity<Friendship>()
+            builder.Entity<Friendship>()
                 .HasOne(f => f.User2)
                 .WithMany()
                 .HasForeignKey(f => f.User2Id);
 
-            modelBuilder.Entity<FriendRequest>()
+            builder.Entity<FriendRequest>()
                 .HasOne(fr => fr.Sender)
                 .WithMany(u => u.SentFriendRequests)
                 .HasForeignKey(fr => fr.SenderId);
 
-            modelBuilder.Entity<FriendRequest>()
+            builder.Entity<FriendRequest>()
                 .HasOne(fr => fr.Receiver)
                 .WithMany(u => u.ReceivedFriendRequests)
                 .HasForeignKey(fr => fr.ReceiverId);
-            modelBuilder.Entity<Song>()
-              .HasMany(p => p.Comments)
-              .WithOne(c => c.Song)
-              .OnDelete(DeleteBehavior.Cascade);
 
+            builder.Entity<Song>()
+                .HasMany(p => p.Comments)
+                .WithOne(c => c.Song)
+                .OnDelete(DeleteBehavior.Cascade);
         }
-
     }
 }

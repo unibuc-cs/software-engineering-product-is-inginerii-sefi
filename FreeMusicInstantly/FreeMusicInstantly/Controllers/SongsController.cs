@@ -14,12 +14,16 @@ namespace FreeMusicInstantly.Controllers
 
         private readonly UserManager<ApplicationUser> _userManager;
 
-        private readonly RoleManager<IdentityRole> _roleManager;
-        public SongsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        private const string TempDataMessageKey = "message";
+        private const string TempDataMessageTypeKey = "messageType";
+        private const string pathShowString = "/Songs/Show/";
+        private const string indexString = "Index";
+        private const string alertString = "alert alert-danger";
+        private const string dangerAlertString = "alert-danger";
+        public SongsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             db = context;
             _userManager = userManager;
-            _roleManager = roleManager;
         }
         [Authorize(Roles = "User,Admin,Artist")]
         public IActionResult Index()
@@ -33,22 +37,30 @@ namespace FreeMusicInstantly.Controllers
             {
                 search = Convert.ToString(HttpContext.Request.Query["search"]).Trim();
                 search = sanitizer.Sanitize(search);
-                List<int> SongIds = db.Songs
-                                       .Where(song => song.Title.Contains(search))
-                                       .Select(song => song.Id)
-                                       .ToList();
-                songs = db.Songs
-                            .Where(song => SongIds.Contains(song.Id))
-                            .Include("User")
-                            .OrderBy(song => song.Title);
+                if (!string.IsNullOrEmpty(search))
+                {
+                    List<int> SongIds = db.Songs
+                                           .Where(song => song.Title != null && song.Title.Contains(search))
+                                           .Select(song => song.Id)
+                                           .ToList();
+
+                    songs = db.Songs
+                          .Where(song => SongIds.Contains(song.Id))
+                          .Include("User")
+                          .OrderBy(song => song.Title);
+                }
+              
             }
 
             ViewBag.Songs = songs;
-            if (TempData.ContainsKey("message"))
+            if (TempData.TryGetValue(TempDataMessageKey, out var message))
             {
-                ViewBag.Msg = TempData["message"];
-                ViewBag.MsgType = TempData["messageType"];
+                ViewBag.Msg = message;
+                TempData.TryGetValue(TempDataMessageTypeKey, out var msgType);
+                ViewBag.MsgType = msgType; 
             }
+
+
             ViewBag.SearchString = search;
             int _perPage = 6;
             int totalItems = songs.Count();
@@ -71,70 +83,29 @@ namespace FreeMusicInstantly.Controllers
 
             SetAccessRights();
 
-            if (search != "")
-            {
-                ViewBag.PaginationBaseUrl = "/Songs/Index/?search="
-                + search + "&page";
-            }
-            else
-            {
-                ViewBag.PaginationBaseUrl = "/Songs/Index/?page";
-            }
+            ViewBag.PaginationBaseUrl = search != "" ? $"/Songs/Index/?search={search}&page" : "/Songs/Index/?page";
 
             return View();
-            //var songs = db.Songs.Include("User")
-            //                    .Include(s => s.SongAlbums)
-            //                    .ThenInclude(sa => sa.Album)
-            //                    .OrderBy(p => p.Title)
-            //                    .ToList();
-            //int perPage = 9;
-            //string search = "";
-            //if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
-            //{   search = Convert.ToString(HttpContext.Request.Query["search"]);
-            //    songs = db.Songs.Include("User")
-            //                    .Include(s => s.SongAlbums)
-            //                    .ThenInclude(sa => sa.Album)
-            //                    .Where(p => p.Title.Contains(search))
-            //                    .OrderBy(p => p.Title)
-            //                    .ToList();
-            //}
-            //ViewBag.SearchString = search;
 
-            //var totalItems = songs.Count();
-            //var page = Convert.ToInt32(HttpContext.Request.Query["page"]);
-            //var offset = 0;
-            //if(!page.Equals(0))
-            //{
-            //    offset = (page - 1) * perPage;
-            //}
-            //var paginatedSongs = songs.Skip(offset).Take(perPage).ToList();
-            //for (int i = 0; i < paginatedSongs.Count(); i++)
-            //{
-            //    paginatedSongs[i].SongAlbums = paginatedSongs[i].SongAlbums.Take(1).ToList();
-            //}
-            //ViewBag.Songs = paginatedSongs;
-            //ViewBag.LastPage = Math.Ceiling((float)totalItems / (float)perPage);
-
-            //if (search != "")
-            //{
-            //    ViewBag.PaginationBaseUrl = "/Songs/Index/?search=" + search + "&page";
-            //}
-            //else
-            //{
-            //    ViewBag.PaginationBaseUrl = "/Songs/Index/?page";
-            //}
-            //return View();
         }
+
         [Authorize(Roles = "User,Admin,Artist")]
         public IActionResult Show(int id)
         {
+
+            if (!ModelState.IsValid)
+            {
+                return View("Error"); 
+            }
+
             var song = db.Songs
-                         .Include(s => s.User)
-                         .Include(s => s.Comments)
-                         .ThenInclude(c => c.User)
-                         .Include(s => s.Plays)
-                         .Include(s => s.Likes)
-                         .FirstOrDefault(s => s.Id == id);
+                    .Include(s => s.User)
+                    .Include(s => s.Comments)
+                        .ThenInclude(c => c.User) // No cast needed; ensure User is defined in Comment
+                    .Include(s => s.Plays)
+                    .Include(s => s.Likes)
+                    .FirstOrDefault(s => s.Id == id);
+
 
             if (song == null)
             {
@@ -142,8 +113,8 @@ namespace FreeMusicInstantly.Controllers
             }
 
             ViewBag.SongGroups = null;
-            ViewBag.TotalPlays = song.Plays?.Count() ?? 0;
-            ViewBag.LikesCount = song.Likes?.Count() ?? 0;
+            ViewBag.TotalPlays = song.Plays?.Count ?? 0;
+            ViewBag.LikesCount = song.Likes?.Count ?? 0;
 
             var userId = _userManager.GetUserId(User);
 
@@ -167,14 +138,17 @@ namespace FreeMusicInstantly.Controllers
 
             SetAccessRights();
 
-            if (TempData.ContainsKey("message"))
+            if (TempData.TryGetValue(TempDataMessageKey, out var message))
             {
-                ViewBag.Msg = TempData["message"];
-                ViewBag.MsgType = TempData["messageType"];
+                ViewBag.Msg = message;
+                TempData.TryGetValue(TempDataMessageTypeKey, out var msgType);
+                ViewBag.MsgType = msgType;
             }
 
             return View(song);
         }
+
+
 
 
         [HttpPost]
@@ -185,12 +159,20 @@ namespace FreeMusicInstantly.Controllers
             comment.UserId = _userManager.GetUserId(User);
             if (ModelState.IsValid)
             {
-                comment.Text = new HtmlSanitizer().Sanitize(comment.Text);
+                if (comment.Text != null)
+                {
+                    comment.Text = new HtmlSanitizer().Sanitize(comment.Text);
+                }
+                else
+                {
+                    comment.Text = string.Empty;
+                }
+
                 db.Comments.Add(comment);
                 db.SaveChanges();
-                TempData["message"] = "The comment was successfully added";
-                TempData["messageType"] = " alert alert-success";
-                return Redirect("/Songs/Show/" + comment.SongId);
+                TempData[TempDataMessageKey] = "The comment was successfully added";
+                TempData[TempDataMessageTypeKey] = " alert alert-success";
+                return Redirect(pathShowString + comment.SongId);
             }
 
             else
@@ -201,9 +183,6 @@ namespace FreeMusicInstantly.Controllers
                                    .Where(b => b.Id == comment.SongId)
                                    .First();
 
-                //ViewBag.UserCategories = db.Categories
-                //                          .Where(b => b.UserId == _userManager.GetUserId(User))
-                //                          .ToList();
 
                 SetAccessRights();
 
@@ -246,19 +225,21 @@ namespace FreeMusicInstantly.Controllers
             if (ModelState.IsValid)
             {
                 var sanitizer = new HtmlSanitizer();
-                cat.Title = sanitizer.Sanitize(cat.Title);
-                cat.Description = sanitizer.Sanitize(cat.Description);
+                cat.Title = sanitizer.Sanitize(cat.Title ?? string.Empty);
+
+                cat.Description = sanitizer.Sanitize(cat.Description ?? string.Empty);
+
 
                 db.Songs.Add(cat);
-                db.SaveChanges();
-                TempData["message"] = "The song was added";
-                TempData["messageType"] = "alert alert-success";
-                return RedirectToAction("Index");
+                await db.SaveChangesAsync();
+                TempData[TempDataMessageKey] = "The song was added";
+                TempData[TempDataMessageTypeKey] = "alert alert-success";
+                return RedirectToAction(indexString);
             }
             else
             {
-                TempData["message"] = "The song was not added successfully";
-                TempData["messageType"] = " alert alert-danger";
+                TempData[TempDataMessageKey] = "The song was not added successfully";
+                TempData[TempDataMessageTypeKey] = " alert alert-danger";
                 return View(cat);
             }
         }
@@ -278,8 +259,8 @@ namespace FreeMusicInstantly.Controllers
 
             else
             {
-                TempData["message"] = "You don't have the right to edit a song that doesn't belong to you";
-                TempData["messageType"] = "alert alert-danger";
+                TempData[TempDataMessageKey] = "You don't have the right to edit a song that doesn't belong to you";
+                TempData[TempDataMessageTypeKey] = alertString;
                 return RedirectToAction("Show", new { id = id });
             }
 
@@ -288,22 +269,24 @@ namespace FreeMusicInstantly.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(int id, Song reqcat, IFormFile? SongFile)
         {
-            Song cat = db.Songs.Where(a => a.Id == id).FirstOrDefault();
+            Song? cat = await db.Songs.Where(a => a.Id == id).FirstOrDefaultAsync();
 
 
             if (cat == null)
             {
-                TempData["message"] = "The song does not exist.";
-                TempData["messageType"] = "alert alert-danger";
-                return RedirectToAction("Index");
+                TempData[TempDataMessageKey] = "The song does not exist.";
+                TempData[TempDataMessageTypeKey] = alertString;
+                return RedirectToAction(indexString);
             }
 
 
             if (ModelState.IsValid)
             {
                 var sanitizer = new HtmlSanitizer();
-                cat.Title = sanitizer.Sanitize(cat.Title);
-                cat.Description = sanitizer.Sanitize(cat.Description);
+                cat.Title = sanitizer.Sanitize(cat.Title ?? string.Empty);
+
+                cat.Description = sanitizer.Sanitize(cat.Description ?? string.Empty);
+
 
                 if (cat.UserId == _userManager.GetUserId(User))
                 {
@@ -314,46 +297,44 @@ namespace FreeMusicInstantly.Controllers
 
                     if (SongFile != null)
                     {
-                        
-                        if (Path.GetExtension(SongFile.FileName).ToLower() == ".mp3")
+
+                        if (string.Equals(Path.GetExtension(SongFile.FileName), ".mp3", StringComparison.OrdinalIgnoreCase))
                         {
                             var fileName = Path.GetFileName(SongFile.FileName);
                             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\files", fileName);
 
-                           
                             using (var fileStream = new FileStream(filePath, FileMode.Create))
                             {
                                 await SongFile.CopyToAsync(fileStream);
                             }
 
-                           
                             cat.SongFile = fileName;
                         }
                         else
                         {
-                            TempData["message"] = "Invalid file type. Please upload an MP3 file.";
-                            TempData["messageType"] = "alert alert-danger";
+                            TempData[TempDataMessageKey] = "Invalid file type. Please upload an MP3 file.";
+                            TempData[TempDataMessageTypeKey] = alertString;
                             return View(reqcat);
                         }
                     }
 
-                    db.SaveChanges();
+                    await db.SaveChangesAsync();
 
-                    TempData["message"] = "The song was edited successfully.";
-                    TempData["messageType"] = "alert alert-success";
+                    TempData[TempDataMessageKey] = "The song was edited successfully.";
+                    TempData[TempDataMessageTypeKey] = "alert alert-success";
                     return RedirectToAction("Show", new { id = id });
                 }
                 else
                 {
-                    TempData["message"] = "You don't have the right to edit a song that doesn't belong to you.";
-                    TempData["messageType"] = "alert alert-danger";
+                    TempData[TempDataMessageKey] = "You don't have the right to edit a song that doesn't belong to you.";
+                    TempData[TempDataMessageTypeKey] = alertString;
                     return RedirectToAction("Show", new { id = id });
                 }
             }
             else
             {
-                TempData["message"] = "The song was not edited successfully. Please correct the errors.";
-                TempData["messageType"] = "alert alert-danger";
+                TempData[TempDataMessageKey] = "The song was not edited successfully. Please correct the errors.";
+                TempData[TempDataMessageTypeKey] = alertString;
                 return View(reqcat);
             }
         }
@@ -368,15 +349,15 @@ namespace FreeMusicInstantly.Controllers
             {
                 db.Songs.Remove(cat);
                 db.SaveChanges();
-                TempData["message"] = "The song was deleted";
-                TempData["messageType"] = " alert alert-success";
-                return RedirectToAction("Index");
+                TempData[TempDataMessageKey] = "The song was deleted";
+                TempData[TempDataMessageTypeKey] = " alert alert-success";
+                return RedirectToAction(indexString);
             }
             else
             {
-                TempData["message"] = "You don't have the right to delete a song that doesn't belong to you";
-                TempData["messageType"] = "alert alert-danger";
-                return RedirectToAction("Index");
+                TempData[TempDataMessageKey] = "You don't have the right to delete a song that doesn't belong to you";
+                TempData[TempDataMessageTypeKey] = alertString;
+                return RedirectToAction(indexString);
             }
         }
 
@@ -388,23 +369,23 @@ namespace FreeMusicInstantly.Controllers
             {
                 if (db.SongPlaylists.Any(sp => sp.SongId == songPlaylist.SongId && sp.PlaylistId == songPlaylist.PlaylistId))
                 {
-                    TempData["message"] = "Song already added to playlist!";
-                    TempData["messageType"] = "alert-danger";
+                    TempData[TempDataMessageKey] = "Song already added to playlist!";
+                    TempData[TempDataMessageTypeKey] = dangerAlertString;
                 }
                 else
                 {
                     db.SongPlaylists.Add(songPlaylist);
                     db.SaveChanges();
-                    TempData["message"] = "Song added to playlist!";
-                    TempData["messageType"] = "alert-success";
+                    TempData[TempDataMessageKey] = "Song added to playlist!";
+                    TempData[TempDataMessageTypeKey] = "alert-success";
                 }
             }
             else
             {
-                TempData["message"] = "Could not add song to playlist!";
-                TempData["messageType"] = "alert-danger";
+                TempData[TempDataMessageKey] = "Could not add song to playlist!";
+                TempData[TempDataMessageTypeKey] = dangerAlertString;
             }
-            return Redirect("/Songs/Show/" + songPlaylist.SongId);
+            return Redirect(pathShowString + songPlaylist.SongId);
         }
 
         [Authorize(Roles = "Admin,Artist")]
@@ -415,36 +396,37 @@ namespace FreeMusicInstantly.Controllers
 
             if (ModelState.IsValid)
             {
-                string userId = ViewBag.UserCurent as string;
+                string userId = ViewBag.UserCurent as string ?? string.Empty;
+
 
                 bool isUserSongOwner = db.Songs.Any(s => s.Id == songAlbum.SongId && s.UserId == userId);
 
                 if (!isUserSongOwner)
                 {
-                    TempData["message"] = "You can only add your own songs to an album!";
-                    TempData["messageType"] = "alert-danger";
-                    return Redirect("/Songs/Show/" + songAlbum.SongId);
+                    TempData[TempDataMessageKey] = "You can only add your own songs to an album!";
+                    TempData[TempDataMessageTypeKey] = dangerAlertString;
+                    return Redirect(pathShowString + songAlbum.SongId);
                 }
 
                 if (db.SongAlbums.Any(sa => sa.SongId == songAlbum.SongId && sa.AlbumId == songAlbum.AlbumId))
                 {
-                    TempData["message"] = "Song already added to album!";
-                    TempData["messageType"] = "alert-danger";
+                    TempData[TempDataMessageKey] = "Song already added to album!";
+                    TempData[TempDataMessageTypeKey] = dangerAlertString;
                 }
                 else
                 {
                     db.SongAlbums.Add(songAlbum);
                     db.SaveChanges();
-                    TempData["message"] = "Song added to album!";
-                    TempData["messageType"] = "alert-success";
+                    TempData[TempDataMessageKey] = "Song added to album!";
+                    TempData[TempDataMessageTypeKey] = "alert-success";
                 }
             }
             else
             {
-                TempData["message"] = "Could not add song to album!";
-                TempData["messageType"] = "alert-danger";
+                TempData[TempDataMessageKey] = "Could not add song to album!";
+                TempData[TempDataMessageTypeKey] = dangerAlertString;
             }
-            return Redirect("/Songs/Show/" + songAlbum.SongId);
+            return Redirect(pathShowString + songAlbum.SongId);
         }
 
        

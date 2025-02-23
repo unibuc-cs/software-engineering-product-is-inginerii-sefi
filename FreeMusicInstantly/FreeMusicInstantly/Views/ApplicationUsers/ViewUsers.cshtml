@@ -37,9 +37,11 @@
 <br />
 <br />
 
+
 <div class="row">
     @foreach (var data in ViewBag.UsersList)
     {
+
         var user = data.User;
 
         var isFriend = data.FriendshipId != null;

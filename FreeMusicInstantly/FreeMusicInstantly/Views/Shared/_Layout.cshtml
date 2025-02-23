@@ -13,9 +13,13 @@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <video width="100" height="60" autoplay muted loop> 
+                    <video width="100" height="60" autoplay muted loop>
                         <source src="/Logo/logo.mp4" type="video/mp4">
+                        <track src="/subtitles/logo_subs.vtt" kind="subtitles" srclang="en" label="English">
+                        <track src="/subtitles/logo_subs_ro.vtt" kind="subtitles" srclang="ro" label="Romanian">
+                        Your browser does not support the video tag.
                     </video>
+
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -72,28 +76,23 @@
                         }
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search-heart" viewBox="0 0 16 16">
+                            <button class="nav-link dropdown-toggle text-dark" id="navbarDropdown"
+                                    data-bs-toggle="dropdown" onkeydown="if(event.key === 'Enter') this.click();">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                     class="bi bi-search-heart" viewBox="0 0 16 16">
                                     <path d="M6.5 4.482c1.664-1.673 5.825 1.254 0 5.018-5.825-3.764-1.664-6.69 0-5.018" />
                                     <path d="M13 6.5a6.47 6.47 0 0 1-1.258 3.844q.06.044.115.098l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1-.1-.115h.002A6.5 6.5 0 1 1 13 6.5M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11" />
                                 </svg>
                                 Explore
-                            </a>
-                            <ul class="dropdown-menu ">
-                                <li>
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="ApplicationUsers" asp-action="ViewFriendRequests">Friend requests</a>
-                                </li>
-                                <li>
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="ApplicationUsers" asp-action="ViewFriends">Friends list</a>
-                                </li>
-                                <li>
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="ApplicationUsers" asp-action="ViewUsers">Find friends</a>
-                                </li>
-                                <li>
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="ApplicationUsers" asp-action="ViewArtists">Find artists</a>
-                                </li>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="nav-link text-dark" asp-area="" asp-controller="ApplicationUsers" asp-action="ViewFriendRequests">Friend requests</a></li>
+                                <li><a class="nav-link text-dark" asp-area="" asp-controller="ApplicationUsers" asp-action="ViewFriends">Friends list</a></li>
+                                <li><a class="nav-link text-dark" asp-area="" asp-controller="ApplicationUsers" asp-action="ViewUsers">Find friends</a></li>
+                                <li><a class="nav-link text-dark" asp-area="" asp-controller="ApplicationUsers" asp-action="ViewArtists">Find artists</a></li>
                             </ul>
                         </li>
+
 
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="ApplicationUsers" asp-action="MyProfile">

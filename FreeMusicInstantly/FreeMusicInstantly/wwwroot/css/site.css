@@ -1,5 +1,7 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
@@ -12,10 +14,7 @@ html {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
-}
+
 
 body {
   margin-bottom: 60px;
@@ -27,7 +26,6 @@ body {
     color: #33b249;
     border: 2px solid #33b249;
     box-shadow: 0 11px 15px rgba(0, 0, 0, 0.1) !important;
-    padding: 7px 15px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
@@ -49,7 +47,6 @@ body {
     color: #559cda;
     border: 2px solid #559cda;
     box-shadow: 0 11px 15px rgba(0, 0, 0, 0.1) !important;
-    padding: 7px 15px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
@@ -71,7 +68,6 @@ body {
     color: #c73a3a;
     border: 2px solid #c73a3a;
     box-shadow: 0 11px 15px rgba(0, 0, 0, 0.1) !important;
-    padding: 7px 15px;
     text-align: center;
     text-decoration: none;
     display: inline-block;

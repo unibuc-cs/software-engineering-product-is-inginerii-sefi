@@ -19,13 +19,10 @@ namespace FreeMusicInstantly.Controllers
         private readonly ApplicationDbContext db;
 
         private readonly UserManager<ApplicationUser> _userManager;
-
-        private readonly RoleManager<IdentityRole> _roleManager;
-        public PlaysController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public PlaysController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             db = context;
             _userManager = userManager;
-            _roleManager = roleManager;
         }
 
 
@@ -40,7 +37,7 @@ namespace FreeMusicInstantly.Controllers
                 return Json(new { success = false, message = "Song not found" });
             }
 
-            string userId = _userManager.GetUserId(User);
+            string? userId = _userManager.GetUserId(User);
             DateTime now = DateTime.UtcNow;
 
         
@@ -51,8 +48,15 @@ namespace FreeMusicInstantly.Controllers
 
             if (recentPlay != null && (now - recentPlay.PlayTime).TotalSeconds < 10)
             {
-                return Json(new { success = false, message = "Play already counted too recently", totalPlays = song.Plays.Count });
+                return Json(new
+                {
+                    success = false,
+                    message = "Play already counted too recently",
+                    totalPlays = song?.Plays?.Count ?? 0
+
+            });
             }
+
 
             var newPlay = new Play
             {

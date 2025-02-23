@@ -11,56 +11,77 @@ namespace FreeMusicInstantly.Controllers
     {
         private readonly ApplicationDbContext db;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        public PlaylistsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        private const string indexString = "Index";
+        private const string TempDataMessageKey = "message";
+        private const string TempDataMessageTypeKey = "messageType";
+        private const string alertDangerString = "alert alert-danger";
+        public PlaylistsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             db = context;
             _userManager = userManager;
-            _roleManager = roleManager;
         }
 
         [Authorize(Roles = "User,Admin,Artist")]
         public IActionResult Index()
         {
             SetAccessRights();
-            var playlists = db.Playlists.Include("SongPlaylists")
-                                        .Where(x => x.UserId == _userManager.GetUserId(User)).Include("User");
+
+            var playlists = db.Playlists
+                .Include(p => p.SongPlaylists)
+                    .ThenInclude(sp => sp.Song)
+                .Include(p => p.User)
+                .Where(x => x.UserId == _userManager.GetUserId(User))
+                .ToList(); // Call ToList to execute the query
+
             ViewBag.Playlists = playlists;
             ViewBag.IsOwner = true;
-            if (TempData.ContainsKey("message"))
-            {
-                ViewBag.Msg = TempData["message"];
-                ViewBag.MsgType = TempData["messageType"];
-            }
 
+            if (TempData.TryGetValue(TempDataMessageKey, out var message))
+            {
+                ViewBag.Msg = message;
+                TempData.TryGetValue(TempDataMessageTypeKey, out var msgType);
+                ViewBag.MsgType = msgType;
+            }
 
             return View();
         }
+
+
 
         public IActionResult IndexFriend(string friendId)
         {
             SetAccessRights();
             var currentUserId = _userManager.GetUserId(User);
+
             var friendship = db.Friendships
-                               .Where(f => (f.User1Id == currentUserId && f.User2Id == friendId) || (f.User1Id == friendId && f.User2Id == currentUserId))
-                               .FirstOrDefault();
+                .FirstOrDefault(f => (f.User1Id == currentUserId && f.User2Id == friendId) ||
+                                     (f.User1Id == friendId && f.User2Id == currentUserId));
+
             if (friendship == null)
             {
-                TempData["message"] = "You are not friends with this user!";
-                TempData["messageType"] = "alert alert-danger";
+                TempData[TempDataMessageKey] = "You are not friends with this user!";
+                TempData[TempDataMessageTypeKey] = alertDangerString;
                 return RedirectToAction("ViewUsers", "ApplicationUsers");
             }
-            var playlists = db.Playlists.Include("SongPlaylists")
-                                        .Where(x => x.UserId == friendId).Include("User");
+
+            var playlists = db.Playlists.Include(p => p.SongPlaylists)
+                                         .ThenInclude(sp => sp.Song)
+                                         .Include(p => p.User)
+                                         .Where(x => x.UserId == friendId);
+
             ViewBag.Playlists = playlists;
             ViewBag.IsOwner = false;
-            if (TempData.ContainsKey("message"))
+
+            if (TempData.TryGetValue(TempDataMessageKey, out var message))
             {
-                ViewBag.Msg = TempData["message"];
-                ViewBag.MsgType = TempData["messageType"];
+                ViewBag.Msg = message;
+                TempData.TryGetValue(TempDataMessageTypeKey, out var msgType);
+                ViewBag.MsgType = msgType;
             }
-            return View("Index");
+
+            return View(indexString);
         }
+
 
         [Authorize(Roles = "Admin,Artist,User")]
         public IActionResult New()
@@ -93,15 +114,15 @@ namespace FreeMusicInstantly.Controllers
             if (ModelState.IsValid)
             {
                 db.Playlists.Add(p);
-                db.SaveChanges();
-                TempData["message"] = "The playlist was added";
-                TempData["messageType"] = "alert alert-success";
-                return RedirectToAction("Index");
+                await db.SaveChangesAsync();
+                TempData[TempDataMessageKey] = "The playlist was added";
+                TempData[TempDataMessageTypeKey] = "alert alert-success";
+                return RedirectToAction(indexString);
             }
             else
             {
-                TempData["message"] = "The playlist was not added successfully";
-                TempData["messageType"] = " alert alert-danger";
+                TempData[TempDataMessageKey] = "The playlist was not added successfully";
+                TempData[TempDataMessageTypeKey] = " alert alert-danger";
                 return View(p);
             }
         }
@@ -111,28 +132,42 @@ namespace FreeMusicInstantly.Controllers
         {
             SetAccessRights();
             var userId = _userManager.GetUserId(User);
-            var p = db.Playlists.Include("SongPlaylists.Song")
-                                   .Include("SongPlaylists.Song.User")
-                                   .Include("User")
-                                   .Where(a => a.Id == id).First();
-            if(p.UserId != userId) {
+
+            var p = db.Playlists
+                .Include("SongPlaylists.Song")
+                .Include("SongPlaylists.Song.User")
+                .Include("User")
+                .FirstOrDefault(a => a.Id == id); 
+
+            if (p == null)
+            {
+                return NotFound(); 
+            }
+
+            if (p.UserId != userId)
+            {
                 var ownerFriendship = db.Friendships
-                    .Where(f => (f.User1Id == userId && f.User2Id == p.UserId) || (f.User1Id == p.UserId && f.User2Id == userId));
-                if(ownerFriendship.Count() == 0) {
-                    TempData["message"] = "You don't have access to this playlist!";
-                    TempData["messageType"] = "alert alert-danger";
-                    return RedirectToAction("Index");
+                    .Where(f => (f.User1Id == userId && f.User2Id == p.UserId) ||
+                                 (f.User1Id == p.UserId && f.User2Id == userId));
+
+                if (!ownerFriendship.Any())
+                {
+                    TempData[TempDataMessageKey] = "You don't have access to this playlist!";
+                    TempData[TempDataMessageTypeKey] = alertDangerString;
+                    return RedirectToAction(indexString);
                 }
             }
 
-            if (TempData.ContainsKey("message"))
+            if (TempData.TryGetValue(TempDataMessageKey, out var message))
             {
-                ViewBag.Msg = TempData["message"];
-                ViewBag.MsgType = TempData["messageType"];
+                ViewBag.Msg = message;
+                TempData.TryGetValue(TempDataMessageTypeKey, out var msgType);
+                ViewBag.MsgType = msgType; 
             }
-            return View(p);
 
+            return View(p);
         }
+
 
         [Authorize(Roles = "Admin,Artist,User")]
         public IActionResult Edit(int id)
@@ -148,10 +183,10 @@ namespace FreeMusicInstantly.Controllers
 
             else
             {
-                TempData["message"] = "You don't have the right to edit a playlist that doesn't belong to you";
-                TempData["messageType"] = "alert alert-danger";
-                return RedirectToAction("Index");
-            }
+                TempData[TempDataMessageKey] = "You don't have the right to edit a playlist that doesn't belong to you";
+                TempData[TempDataMessageTypeKey] = alertDangerString;
+                return RedirectToAction(indexString);
+            }   
 
         }
 
@@ -159,8 +194,9 @@ namespace FreeMusicInstantly.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(int id, Playlist reqp, IFormFile? PhotoCover)
         {
-            Playlist p = db.Playlists.Where(a => a.Id == id).First();
+            Playlist p = await db.Playlists.Where(a => a.Id == id).FirstAsync();
 
+            
             if (ModelState.IsValid)
             {
                 if (p.UserId == _userManager.GetUserId(User))
@@ -211,18 +247,18 @@ namespace FreeMusicInstantly.Controllers
                         db.SongPlaylists.Add(songPlaylist);
                         p.SongPlaylists.Add(songPlaylist);
                     }
-                    db.SaveChanges();
-                    
-                    TempData["message"] = "The playlist was edited successfully";
-                    TempData["messageType"] = "alert alert-success";
-                    db.SaveChanges();
-                    return RedirectToAction("Index");
+                    await db.SaveChangesAsync();
+
+                    TempData[TempDataMessageKey] = "The playlist was edited successfully";
+                    TempData[TempDataMessageTypeKey] = "alert alert-success";
+                    await db.SaveChangesAsync();
+                    return RedirectToAction(indexString);
                 }
                 else
                 {
-                    TempData["message"] = "You don't have the right to edit a playlist that doesn't belong to you";
-                    TempData["messageType"] = "alert alert-danger";
-                    return RedirectToAction("Index");
+                    TempData[TempDataMessageKey] = "You don't have the right to edit a playlist that doesn't belong to you";
+                    TempData[TempDataMessageTypeKey] = alertDangerString;
+                    return RedirectToAction(indexString);
                 }
             }
             else
@@ -241,7 +277,7 @@ namespace FreeMusicInstantly.Controllers
                                         .Where(a => a.Id == id).First();
             if (_userManager.GetUserId(User) == p.UserId || User.IsInRole("Admin"))
             {
-                if (p.SongPlaylists.Count > 0)
+                if (p.SongPlaylists != null && p.SongPlaylists.Count > 0)
                 {
                     foreach (var sp in p.SongPlaylists)
                     {
@@ -252,51 +288,19 @@ namespace FreeMusicInstantly.Controllers
 
                 db.Playlists.Remove(p);
                 db.SaveChanges();
-                TempData["message"] = "The playlist was deleted";
-                TempData["messageType"] = " alert alert-success";
-                return RedirectToAction("Index");
+                TempData[TempDataMessageKey] = "The playlist was deleted";
+                TempData[TempDataMessageTypeKey] = " alert alert-success";
+                return RedirectToAction(indexString);
             }
             else
             {
-                TempData["message"] = "You don't have the right to delete a playlist that doesn't belong to you";
-                TempData["messageType"] = "alert alert-danger";
-                return RedirectToAction("Index");
+                TempData[TempDataMessageKey] = "You don't have the right to delete a playlist that doesn't belong to you";
+                TempData[TempDataMessageTypeKey] = alertDangerString;
+                return RedirectToAction(indexString);
             }
         }
 
-        //[Authorize(Roles = "Admin,Artist,User")]
-        //[HttpPost]
-        //public IActionResult RemoveSong(int playlistId, int songId)
-        //{
-        //    Playlist p = db.Playlists.Include("SongPlaylists")
-        //                              .Where(a => a.Id == playlistId).First();
-
-        //    if (_userManager.GetUserId(User) == p.UserId)
-        //    {
-
-        //        foreach (var sp in p.SongPlaylists)
-        //        {
-        //            if (sp.SongId == songId)
-        //            {
-        //                db.SongPlaylists.Remove(sp);
-        //            }
-
-        //        }
-
-
-        //        db.SaveChanges();
-        //        TempData["message"] = "The song was deleted from the playlist";
-        //        TempData["messageType"] = " alert alert-success";
-        //        return Redirect("/Playlists/Show/" + p.Id);
-        //    }
-        //    else
-        //    {
-        //        TempData["message"] = "You don't have the right to remove the song from this playlist";
-        //        return Redirect("/Playlists/Show/" + p.Id);
-        //    }
-
-        //}
-
+       
         [Authorize(Roles = "Admin,Artist,User")]
         [HttpPost]
         public IActionResult RemoveSong([FromForm] SongPlaylist songPlaylist)
@@ -312,20 +316,20 @@ namespace FreeMusicInstantly.Controllers
                 {
                     db.SongPlaylists.Remove(songPlaylistToRemove);
                     db.SaveChanges();
-                    TempData["message"] = "The song was deleted from the playlist";
-                    TempData["messageType"] = " alert alert-success";
+                    TempData[TempDataMessageKey] = "The song was deleted from the playlist";
+                    TempData[TempDataMessageTypeKey] = " alert alert-success";
                     return Redirect("/Playlists/Show/" + playlist.Id);
                 }
                 else
                 {
-                    TempData["message"] = "The song was not found in the playlist";
-                    TempData["messageType"] = " alert alert-danger";
+                    TempData[TempDataMessageKey] = "The song was not found in the playlist";
+                    TempData[TempDataMessageTypeKey] = " alert alert-danger";
                     return Redirect("/Playlists/Show/" + playlist.Id);
                 }
             }
             else
             {
-                TempData["message"] = "You don't have the right to remove the song from this playlist";
+                TempData[TempDataMessageKey] = "You don't have the right to remove the song from this playlist";
                 return Redirect("/Playlists/Show/" + playlist.Id);
             }
         }

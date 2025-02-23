@@ -19,6 +19,13 @@ namespace proiectDAW.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
 
         private readonly RoleManager<IdentityRole> _roleManager;
+        private const string TempDataMessageKey = "message";
+        private const string TempDataMessageTypeKey = "messageType";
+
+        private const string viewUserString = "ViewUsers";
+        private const string adminString = "Admin";
+        private const string alertSuccessString = "alert alert-success";
+        private const string alertDangerString = "alert alert-danger";
 
         public ApplicationUsersController(
             ApplicationDbContext context,
@@ -44,20 +51,33 @@ namespace proiectDAW.Controllers
         public async Task<IActionResult> MyProfile()
         {
             var currentUserId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(currentUserId))
+            {
+                return BadRequest("Invalid user ID.");
+            }
+
             var currentUser = await _userManager.FindByIdAsync(currentUserId);
+            if (currentUser == null)
+            {
+                return NotFound("User not found.");
+            }
 
             ViewBag.CurrentUserId = currentUserId;
             if (currentUser == null)
             {
-                TempData["message"] = "Your profile was not found";
-                TempData["messageType"] = "alert alert-danger";
+                TempData[TempDataMessageKey] = "Your profile was not found";
+                TempData[TempDataMessageTypeKey] = alertDangerString;
                 return RedirectToAction("Index");
             }
             ViewBag.EsteArtist = User.IsInRole("Artist");
-            if (TempData.ContainsKey("message"))
+            if (TempData.TryGetValue(TempDataMessageKey, out var msg))
             {
-                ViewBag.Msg = TempData["message"];
-                ViewBag.MsgType = TempData["messageType"];
+                ViewBag.Msg = msg;
+            }
+
+            if (TempData.TryGetValue(TempDataMessageTypeKey, out var msgType))
+            {
+                ViewBag.MsgType = msgType;
             }
 
             return View(currentUser);
@@ -70,41 +90,56 @@ namespace proiectDAW.Controllers
             var artistRoleName = "User";
             var userId = _userManager.GetUserId(User);
             var users = from user in db.Users
-                          join userRole in db.UserRoles on user.Id equals userRole.UserId
-                          join role in db.Roles on userRole.RoleId equals role.Id
-                          join friendship in db.Friendships on new { A=userId, B=user.Id } equals new { A=friendship.User1Id, B=friendship.User2Id } into userFriendships1
-                          from friendship1 in userFriendships1.DefaultIfEmpty()
-                          join friendship in db.Friendships on new { A=userId, B=user.Id } equals new { A=friendship.User2Id, B=friendship.User1Id } into userFriendships2
-                          from friendship2 in userFriendships2.DefaultIfEmpty()
-                          join sentRequest in db.FriendRequests on new { A=userId, B=user.Id } equals new { A=sentRequest.SenderId, B=sentRequest.ReceiverId } into userSentRequests
-                          from sentRequest in userSentRequests.DefaultIfEmpty()
-                          join receivedRequest in db.FriendRequests on new { A=userId, B=user.Id } equals new { A=receivedRequest.ReceiverId, B=receivedRequest.SenderId } into userReceivedRequests
-                          from receivedRequest in userReceivedRequests.DefaultIfEmpty()
-                          where role.Name == artistRoleName && user.Id != userId
-                          orderby user.UserName
-                          select new
-                          {
-                              User = user,
-                              FriendshipId = friendship1 != null ? friendship1.Id : friendship2 != null ? friendship2.Id : (int?)null,
-                              SentRequestId = sentRequest != null ? sentRequest.Id : (int?)null,
-                              ReceivedRequestId = receivedRequest != null ? receivedRequest.Id : (int?)null,
-                          };
+                        join userRole in db.UserRoles on user.Id equals userRole.UserId
+                        join role in db.Roles on userRole.RoleId equals role.Id
+                        join friendship in db.Friendships on new { A = userId, B = user.Id } equals new { A = friendship.User1Id, B = friendship.User2Id } into userFriendships1
+                        from friendship1 in userFriendships1.DefaultIfEmpty()
+                        join friendship in db.Friendships on new { A = userId, B = user.Id } equals new { A = friendship.User2Id, B = friendship.User1Id } into userFriendships2
+                        from friendship2 in userFriendships2.DefaultIfEmpty()
+                        join sentRequest in db.FriendRequests on new { A = userId, B = user.Id } equals new { A = sentRequest.SenderId, B = sentRequest.ReceiverId } into userSentRequests
+                        from sentRequest in userSentRequests.DefaultIfEmpty()
+                        join receivedRequest in db.FriendRequests on new { A = userId, B = user.Id } equals new { A = receivedRequest.ReceiverId, B = receivedRequest.SenderId } into userReceivedRequests
+                        from receivedRequest in userReceivedRequests.DefaultIfEmpty()
+                        where role.Name == artistRoleName && user.Id != userId
+                        orderby user.UserName
+                        let friendshipId = friendship1 != null ? friendship1.Id : friendship2 != null ? friendship2.Id : (int?)null // Extracted statement
+                        select new
+                        {
+                            User = user,
+                            FriendshipId = friendshipId, // Use the extracted variable here
+                            SentRequestId = sentRequest != null ? sentRequest.Id : (int?)null,
+                            ReceivedRequestId = receivedRequest != null ? receivedRequest.Id : (int?)null,
+                        };
 
-            if (search != null)
+
+            if (!string.IsNullOrWhiteSpace(search)) 
             {
                 search = search.Trim();
-                users = users.Where(u => u.User.UserName.Contains(search));
+
+                if (users != null)
+                {
+                    users = users.Where(u => u.User != null && u.User.UserName != null && u.User.UserName.Contains(search));
+                }
             }
+
+
+
+
 
             ViewBag.SearchString = search ?? "";
             ViewBag.UsersList = users;
-            ViewBag.EsteAdmin = User.IsInRole("Admin");
+            ViewBag.EsteAdmin = User.IsInRole(adminString);
             ViewBag.FromFriendsList = false;
-            if (TempData.ContainsKey("message"))
+            if (TempData.TryGetValue(TempDataMessageKey, out var msg))
             {
-                ViewBag.Msg = TempData["message"];
-                ViewBag.MsgType = TempData["messageType"];
+                ViewBag.Msg = msg;
             }
+
+            if (TempData.TryGetValue(TempDataMessageTypeKey, out var msgType))
+            {
+                ViewBag.MsgType = msgType;
+            }
+
             return View(users);
         }
 
@@ -122,10 +157,16 @@ namespace proiectDAW.Controllers
                               User2 = user2,
                               FriendshipId = friendship.Id,
                           };
-            if(search != null) {
+            if (!string.IsNullOrWhiteSpace(search))
+            {
                 search = search.Trim();
-                friends_ = friends_.Where(f => f.User1.Id == userId ? f.User2.UserName.Contains(search) : f.User1.UserName.Contains(search));
+                friends_ = friends_.Where(f =>
+                    (f.User1 != null && f.User1.Id == userId && f.User2 != null && f.User2.UserName != null && f.User2.UserName.Contains(search)) ||
+                    (f.User1 != null && f.User1.UserName != null && f.User1.UserName.Contains(search))
+                );
             }
+
+
             var friends = friends_.Select(f => new {
                 User = f.User1.Id == userId ? f.User2 : f.User1,
                 f.FriendshipId,
@@ -134,15 +175,20 @@ namespace proiectDAW.Controllers
             });
             ViewBag.SearchString = search ?? "";
             ViewBag.UsersList = friends;
-            ViewBag.EsteAdmin = User.IsInRole("Admin");
+            ViewBag.EsteAdmin = User.IsInRole(adminString);
             ViewBag.CurrentUserId = userId;
             ViewBag.FromFriendsList = true;
-            if (TempData.ContainsKey("message"))
+            if (TempData.TryGetValue(TempDataMessageKey, out var msg))
             {
-                ViewBag.Msg = TempData["message"];
-                ViewBag.MsgType = TempData["messageType"];
+                ViewBag.Msg = msg;
             }
-            return View("ViewUsers", friends);
+
+            if (TempData.TryGetValue(TempDataMessageTypeKey, out var msgType))
+            {
+                ViewBag.MsgType = msgType;
+            }
+
+            return View(viewUserString, friends);
         }
 
         [Authorize(Roles = "Admin,User,Artist")]
@@ -158,11 +204,12 @@ namespace proiectDAW.Controllers
                                      RequestId = request.Id,
                                  };
             ViewBag.FriendRequests = friendRequests;
-            if (TempData.ContainsKey("message"))
+            if (TempData.TryGetValue(TempDataMessageKey, out var message))
             {
-                ViewBag.Msg = TempData["message"];
-                ViewBag.MsgType = TempData["messageType"];
+                ViewBag.Msg = message;
+                ViewBag.MsgType = TempData.TryGetValue(TempDataMessageTypeKey, out var msgType) ? msgType : null;
             }
+
             return View();
         }
 
@@ -179,23 +226,25 @@ namespace proiectDAW.Controllers
             db.FriendRequests.Add(friendRequest);
             db.SaveChanges();
 
-            TempData["message"] = "Friend request sent!";
-            TempData["messageType"] = "alert alert-success";
-            return RedirectToAction("ViewUsers");
+            TempData[TempDataMessageKey] = "Friend request sent!";
+            TempData[TempDataMessageTypeKey] = alertSuccessString;
+            return RedirectToAction(viewUserString);
         }
 
         [Authorize(Roles = "Admin,User,Artist")]
         [AcceptVerbs("Post")]
         public IActionResult AcceptFriendRequest(int requestId, bool? fromFriendRequests) {
             var request = db.FriendRequests.Find(requestId);
-            var redirect = (fromFriendRequests ?? false) ? "ViewFriendRequests" : "ViewUsers";
+            var redirect = (fromFriendRequests ?? false) ? "ViewFriendRequests" : viewUserString;
 
-            if (request.ReceiverId != _userManager.GetUserId(User))
+            if (request == null || request.ReceiverId == null || request.ReceiverId != _userManager.GetUserId(User))
             {
-                TempData["message"] = "Not authorized to accept this friend request!";
-                TempData["messageType"] = "alert alert-danger";
+                TempData[TempDataMessageKey] = "Not authorized to accept this friend request!";
+                TempData[TempDataMessageTypeKey] = alertDangerString;
                 return RedirectToAction(redirect);
             }
+
+
 
             db.FriendRequests.Remove(request);
 
@@ -207,70 +256,88 @@ namespace proiectDAW.Controllers
             db.Friendships.Add(friendship);
             db.SaveChanges();
 
-            TempData["message"] = "Friend request accepted!";
-            TempData["messageType"] = "alert alert-success";
+            TempData[TempDataMessageKey] = "Friend request accepted!";
+            TempData[TempDataMessageTypeKey] = alertSuccessString;
             return RedirectToAction(redirect);
         }
 
         [Authorize(Roles = "Admin,User,Artist")]
         [AcceptVerbs("Post")]
-        public IActionResult CancelFriendRequest(int requestId) {
+        public IActionResult CancelFriendRequest([FromBody] int requestId)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData[TempDataMessageKey] = "Invalid request!";
+                TempData[TempDataMessageTypeKey] = alertDangerString;
+                return RedirectToAction(viewUserString);
+            }
+
             var request = db.FriendRequests.Find(requestId);
+
+            if (request == null)
+            {
+                TempData[TempDataMessageKey] = "Friend request not found!";
+                TempData[TempDataMessageTypeKey] = "alert alert-warning";
+                return RedirectToAction(viewUserString);
+            }
 
             if (request.SenderId != _userManager.GetUserId(User))
             {
-                TempData["message"] = "Not authorized to cancel this friend request!";
-                TempData["messageType"] = "alert alert-danger";
-                return RedirectToAction("ViewUsers");
+                TempData[TempDataMessageKey] = "Not authorized to cancel this friend request!";
+                TempData[TempDataMessageTypeKey] = alertDangerString;
+                return RedirectToAction(viewUserString);
             }
 
             db.FriendRequests.Remove(request);
             db.SaveChanges();
 
-            TempData["message"] = "Friend request canceled!";
-            TempData["messageType"] = "alert alert-success";
-            return RedirectToAction("ViewUsers");
+            TempData[TempDataMessageKey] = "Friend request canceled!";
+            TempData[TempDataMessageTypeKey] = alertSuccessString;
+            return RedirectToAction(viewUserString);
         }
+
 
         [Authorize(Roles = "Admin,User,Artist")]
         [AcceptVerbs("Post")]
         public IActionResult DeclineFriendRequest(int requestId) {
             var request = db.FriendRequests.Find(requestId);
 
-            if (request.ReceiverId != _userManager.GetUserId(User))
+            if (request == null || request.ReceiverId != _userManager.GetUserId(User))
             {
-                TempData["message"] = "Not authorized to decline this friend request!";
-                TempData["messageType"] = "alert alert-danger";
+                TempData[TempDataMessageKey] = "Not authorized to decline this friend request!";
+                TempData[TempDataMessageTypeKey] = alertDangerString;
                 return RedirectToAction("ViewFriendRequests");
             }
+
 
             db.FriendRequests.Remove(request);
             db.SaveChanges();
 
-            TempData["message"] = "Friend request declined!";
-            TempData["messageType"] = "alert alert-success";
+            TempData[TempDataMessageKey] = "Friend request declined!";
+            TempData[TempDataMessageTypeKey] = alertSuccessString;
             return RedirectToAction("ViewFriendRequests");
         }
 
         [Authorize(Roles = "Admin,User,Artist")]
         [AcceptVerbs("Post")]
         public IActionResult RemoveFriend(int friendshipId, bool fromFriendsList) {
-            var redirect = fromFriendsList ? "ViewFriends" : "ViewUsers";
+            var redirect = fromFriendsList ? "ViewFriends" : viewUserString;
             var friendship = db.Friendships.Find(friendshipId);
             var userId = _userManager.GetUserId(User);
 
-            if (friendship.User1Id != userId && friendship.User2Id != userId)
-            {
-                TempData["message"] = "Not authorized to delete this friendship!";
-                TempData["messageType"] = "alert alert-danger";
-                return RedirectToAction(redirect);
-            }
+            if (friendship == null || (friendship.User1Id != userId && friendship.User2Id != userId))
+{
+    TempData[TempDataMessageKey] = "Not authorized to delete this friendship!";
+    TempData[TempDataMessageTypeKey] = alertDangerString;
+    return RedirectToAction(redirect);
+}
+
 
             db.Friendships.Remove(friendship);
             db.SaveChanges();
 
-            TempData["message"] = "Friend removed!";
-            TempData["messageType"] = "alert alert-success";
+            TempData[TempDataMessageKey] = "Friend removed!";
+            TempData[TempDataMessageTypeKey] = alertSuccessString;
             return RedirectToAction(redirect);
         }
 
@@ -289,22 +356,25 @@ namespace proiectDAW.Controllers
             if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
             {
                 search = Convert.ToString(HttpContext.Request.Query["search"]).Trim();
-                artists = (from user in db.Users
-                         join userRole in db.UserRoles on user.Id equals userRole.UserId
-                         join role in db.Roles on userRole.RoleId equals role.Id
-                         where role.Name == artistRoleName && user.UserName.Contains(search)
-                         orderby user.UserName
-                         select user);
+                artists = from user in db.Users
+                          join userRole in db.UserRoles on user.Id equals userRole.UserId
+                          join role in db.Roles on userRole.RoleId equals role.Id
+                          where role.Name == artistRoleName && user.UserName != null && user.UserName.Contains(search)
+                          orderby user.UserName
+                          select user;
+
 
             }
             ViewBag.SearchString = search;
             ViewBag.UsersList = artists;
-            ViewBag.EsteAdmin = User.IsInRole("Admin");
-            if (TempData.ContainsKey("message"))
+            ViewBag.EsteAdmin = User.IsInRole(adminString);
+            if (TempData.TryGetValue(TempDataMessageKey, out var message))
             {
-                ViewBag.Msg = TempData["message"];
-                ViewBag.MsgType = TempData["messageType"];
+                ViewBag.Msg = message;
+
+                ViewBag.MsgType = TempData.TryGetValue(TempDataMessageTypeKey, out var msgType) ? msgType : null;
             }
+
 
             return View(artists);
         }
@@ -319,46 +389,61 @@ namespace proiectDAW.Controllers
                         select user;
 
             ViewBag.UsersList = users;
-            ViewBag.EsteAdmin = User.IsInRole("Admin");
-            if (TempData.ContainsKey("message"))
+            ViewBag.EsteAdmin = User.IsInRole(adminString);
+
+            if (TempData.TryGetValue(TempDataMessageKey, out var message))
             {
-                ViewBag.Msg = TempData["message"];
-                ViewBag.MsgType = TempData["messageType"];
+                ViewBag.Msg = message;
+                TempData.TryGetValue(TempDataMessageTypeKey, out var msgType);
+                ViewBag.MsgType = msgType; 
             }
+
             return View();
         }
+
 
 
 
         [Authorize(Roles = "User,Admin,Artist")]
         public async Task<ActionResult> Show(string id)
         {
-
-            ViewBag.EsteAdmin = User.IsInRole("Admin");
+            ViewBag.EsteAdmin = User.IsInRole(adminString);
             ViewBag.UserCurent = _userManager.GetUserId(User);
-            ApplicationUser user = (ApplicationUser)db.Users.Find(id);
-            var roles = await _userManager.GetRolesAsync(user);
 
+            var user = await db.Users.FindAsync(id) as ApplicationUser;
+
+            if (user == null)
+            {
+                return NotFound(); 
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
             ViewBag.Roles = roles;
 
             return View(user);
         }
 
+
         [Authorize(Roles = "User,Admin,Artist")]
         public async Task<ActionResult> ShowArtist(string id)
         {
 
-            ViewBag.EsteAdmin = User.IsInRole("Admin");
+            ViewBag.EsteAdmin = User.IsInRole(adminString);
             ViewBag.UserCurent = _userManager.GetUserId(User);
             ViewBag.EsteArtist = User.IsInRole("Artist");
 
-            ApplicationUser user = (ApplicationUser)db.Users.Find(id);
+            var user = await db.Users.FindAsync(id) as ApplicationUser;
 
+            if (user == null)
+            {
+                return NotFound();
+            }
             var artistSongs = db.Songs.Where(s => s.UserId == id);
             var artistAlbums = db.Albums.Where(a => a.UserId == id);
             foreach (Album c in artistAlbums)
             {
-                c.NrSongs = db.SongAlbums.Where(a => a.AlbumId == c.Id).Count();
+                c.NrSongs = await db.SongAlbums.Where(a => a.AlbumId == c.Id).CountAsync();
+
             }
             ViewBag.artistSongs = artistSongs;
             ViewBag.artistAlbums = artistAlbums;
@@ -370,21 +455,28 @@ namespace proiectDAW.Controllers
         public async Task<ActionResult> Edit()
         {
             var currentUserId = _userManager.GetUserId(User);
-            var currentUser = await _userManager.FindByIdAsync(currentUserId);
 
+            var user = await db.Users.FindAsync(currentUserId) as ApplicationUser;
 
-            ApplicationUser user = (ApplicationUser)db.Users.Find(currentUserId);
+            if (user == null)
+            {
+                return NotFound(); 
+            }
+
             ViewBag.CurrentUserId = currentUserId;
 
             user.AllRoles = GetAllRoles();
 
             var roleNames = await _userManager.GetRolesAsync(user);
 
+            var currentUserRole = await _roleManager.Roles
+                .Where(r => r.Name != null && (roleNames ?? new List<string>()).Contains(r.Name))
+                .Select(r => r.Id)
+                .FirstOrDefaultAsync();
 
-            var currentUserRole = _roleManager.Roles
-                                              .Where(r => roleNames.Contains(r.Name))
-                                              .Select(r => r.Id)
-                                              .First();
+
+
+
             ViewBag.UserRole = currentUserRole;
 
             return View(user);
@@ -395,15 +487,19 @@ namespace proiectDAW.Controllers
         public async Task<ActionResult> Edit( ApplicationUser newData)
         {
             var currentUserId = _userManager.GetUserId(User);
-            var currentUser = await _userManager.FindByIdAsync(currentUserId);
 
-            ApplicationUser user = (ApplicationUser)db.Users.Find(currentUserId);
+            var user = await db.Users.FindAsync(currentUserId) as ApplicationUser;
+
+            if (user == null)
+            {
+                return NotFound();
+            }
 
             ViewBag.CurrentUserId = currentUserId;
             if (user == null)
             {
-                TempData["message"] = "User not found.";
-                TempData["messageType"] = "alert alert-danger";
+                TempData[TempDataMessageKey] = "User not found.";
+                TempData[TempDataMessageTypeKey] = alertDangerString;
                 return RedirectToAction("Index");
             }
 
@@ -416,15 +512,15 @@ namespace proiectDAW.Controllers
                 user.Biography = newData.Biography;
 
 
-                db.SaveChanges();
+                await db.SaveChangesAsync();
 
-                TempData["message"] = "The user was edited!";
-                TempData["messageType"] = "alert alert-success";
+                TempData[TempDataMessageKey] = "The user was edited!";
+                TempData[TempDataMessageTypeKey] = alertSuccessString;
             }
             else
             {
-                TempData["message"] = "Error when editing the user";
-                TempData["messageType"] = "alert alert-danger";
+                TempData[TempDataMessageKey] = "Error when editing the user";
+                TempData[TempDataMessageTypeKey] = alertSuccessString;
             }
 
             return RedirectToAction("MyProfile");
@@ -465,12 +561,16 @@ namespace proiectDAW.Controllers
 
             foreach (var role in roles)
             {
-                selectList.Add(new SelectListItem
+                if (role != null) // Check if role is not null
                 {
-                    Value = role.Id.ToString(),
-                    Text = role.Name.ToString()
-                });
+                    selectList.Add(new SelectListItem
+                    {
+                        Value = role.Id?.ToString() ?? string.Empty, // Safely handle potential null value
+                        Text = role.Name ?? string.Empty // Handle potential null value
+                    });
+                }
             }
+
             return selectList;
         }
         /* to be implemented
@@ -491,10 +591,10 @@ namespace proiectDAW.Controllers
                 .Where(s => s.UserId == currentUserId)
                 .ToListAsync();
 
-            if (!artistSongs.Any())
+            if (artistSongs.Count == 0)
             {
-                TempData["message"] = "You have no songs.";
-                TempData["messageType"] = "alert alert-warning";
+                TempData[TempDataMessageKey] = "You have no songs.";
+                TempData[TempDataMessageTypeKey] = "alert alert-warning";
                 return View(new List<object>());
             }
 
@@ -535,9 +635,10 @@ namespace proiectDAW.Controllers
 
             var playlistCounts = await db.SongPlaylists
                 .Where(sp => sp.SongId.HasValue && songIds.Contains(sp.SongId.Value))
-                .GroupBy(sp => sp.SongId)
+                .GroupBy(sp => sp.SongId.Value) // Use sp.SongId.Value to ensure it's non-nullable
                 .Select(g => new { SongId = g.Key, Count = g.Count() })
                 .ToDictionaryAsync(x => x.SongId, x => x.Count);
+
 
             var songStatistics = artistSongs.Select(song => new
             {

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace FreeMusicInstantly.Models
 {
@@ -6,6 +7,7 @@ namespace FreeMusicInstantly.Models
     {
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [JsonRequired]
         public int Id { get; set; }
         public int? SongId { get; set; }
         public int? AlbumId { get; set; }

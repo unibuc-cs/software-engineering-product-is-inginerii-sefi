@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace FreeMusicInstantly.Models
 {
@@ -10,7 +10,8 @@ namespace FreeMusicInstantly.Models
     {
         [Key]
         public int PlayId { get; set; }
-        public string UserId { get; set; }
+        [Required]
+        public string? UserId { get; set; }
         public int SongId { get; set; }
         public DateTime PlayTime { get; set; }
 

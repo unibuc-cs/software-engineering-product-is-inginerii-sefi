@@ -14,13 +14,10 @@ namespace FreeMusicInstantly.Controllers
         private readonly ApplicationDbContext db;
 
         private readonly UserManager<ApplicationUser> _userManager;
-
-        private readonly RoleManager<IdentityRole> _roleManager;
-        public LikesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public LikesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             db = context;
             _userManager = userManager;
-            _roleManager = roleManager;
         }
 
 

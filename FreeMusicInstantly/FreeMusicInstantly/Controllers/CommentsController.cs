@@ -11,21 +11,19 @@ namespace proiectDAW.Controllers
     {
         private readonly ApplicationDbContext db;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        public CommentsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public CommentsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             this.db = context;
             _userManager = userManager;
-            _roleManager = roleManager;
         }
         
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
         public IActionResult Delete(int Id)
         {
-            Comment comm = db.Comments.Find(Id);
+            Comment? comm = db.Comments.Find(Id);
 
-            if (comm.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
+            if (comm != null && (comm.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin")))
             {
                 db.Comments.Remove(comm);
                 db.SaveChanges();
